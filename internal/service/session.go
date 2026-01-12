@@ -150,14 +150,18 @@ func (s *SessionService) Connect(ctx context.Context, userID string, session *mo
 	}
 
 	if !immediate {
-		logger.Warnf("Waiting 10 seconds for connection verification...")
+		logger.Info("Waiting 10 seconds for connection verification...")
 		time.Sleep(10 * time.Second)
 
 		s.mu.RLock()
 		currentClient := s.clients[key]
 		s.mu.RUnlock()
 
-		if currentClient == nil || !currentClient.IsConnected() {
+		if currentClient == nil {
+			return nil, errors.New("failed to connect")
+		}
+
+		if !currentClient.IsConnected() {
 			return nil, errors.New("failed to connect")
 		}
 	}
