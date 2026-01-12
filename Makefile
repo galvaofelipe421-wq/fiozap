@@ -3,7 +3,7 @@
 APP_NAME := fiozap
 BINARY := bin/$(APP_NAME)
 MAIN := ./cmd/server
-GO := /snap/bin/go
+GO := $(shell which go)
 
 all: build
 

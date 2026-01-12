@@ -169,14 +169,16 @@ func (h *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
 
 // Connect godoc
 // @Summary Connect WhatsApp session
-// @Description Connect and start a WhatsApp session. If Immediate is false, waits up to 10 seconds to verify successful connection.
+// @Description Connect and start a WhatsApp session. If Immediate is true (default) or not set, returns immediately after initiating connection. If Immediate is false, waits 10 seconds to verify the connection was established successfully before returning - useful for reconnecting sessions that may have been terminated by the phone/device.
 // @Tags Sessions
 // @Accept json
 // @Produce json
-// @Param sessionId path string true "Session name"
-// @Param request body model.SessionConnectRequest false "Connection options"
+// @Param sessionId path string true "Session ID"
+// @Param request body model.SessionConnectRequest false "Connection options: Subscribe (events to subscribe) and Immediate (if false, waits 10s to verify connection)"
 // @Success 200 {object} model.Response
+// @Failure 400 {object} model.Response
 // @Failure 401 {object} model.Response
+// @Failure 500 {object} model.Response "Connection failed (when Immediate is false)"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/connect [post]
 func (h *SessionHandler) Connect(w http.ResponseWriter, r *http.Request) {

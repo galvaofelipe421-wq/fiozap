@@ -1352,7 +1352,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Connect and start a WhatsApp session",
+                "description": "Connect and start a WhatsApp session. If Immediate is true (default) or not set, returns immediately after initiating connection. If Immediate is false, waits 10 seconds to verify the connection was established successfully before returning - useful for reconnecting sessions that may have been terminated by the phone/device.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1366,13 +1366,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Connection options",
+                        "description": "Connection options: Subscribe (events to subscribe) and Immediate (if false, waits 10s to verify connection)",
                         "name": "request",
                         "in": "body",
                         "schema": {
@@ -1387,8 +1387,20 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Response"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection failed (when Immediate is false)",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -2197,8 +2209,13 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "immediate": {
-                    "type": "boolean",
-                    "example": true
+                    "type": "boolean"
+                },
+                "subscribe": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
