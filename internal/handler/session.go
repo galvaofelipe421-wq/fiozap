@@ -169,10 +169,12 @@ func (h *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
 
 // Connect godoc
 // @Summary Connect WhatsApp session
-// @Description Connect and start a WhatsApp session
+// @Description Connect and start a WhatsApp session. If Immediate is false, waits up to 10 seconds to verify successful connection.
 // @Tags Sessions
+// @Accept json
 // @Produce json
 // @Param sessionId path string true "Session name"
+// @Param request body model.SessionConnectRequest false "Connection options"
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
 // @Security ApiKeyAuth
@@ -185,7 +187,20 @@ func (h *SessionHandler) Connect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.sessionService.Connect(r.Context(), user.ID, session)
+	var req model.SessionConnectRequest
+	if r.Body != nil && r.ContentLength > 0 {
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			model.RespondBadRequest(w, errors.New("could not decode payload"))
+			return
+		}
+	}
+
+	immediate := true
+	if req.Immediate != nil {
+		immediate = *req.Immediate
+	}
+
+	result, err := h.sessionService.Connect(r.Context(), user.ID, session, immediate)
 	if err != nil {
 		model.RespondInternalError(w, err)
 		return

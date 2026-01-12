@@ -40,3 +40,8 @@ type SessionStatusResponse struct {
 	Webhook   string `json:"webhook,omitempty"`
 	Events    string `json:"events,omitempty"`
 }
+
+type SessionConnectRequest struct {
+	Subscribe []string `json:"subscribe,omitempty"`
+	Immediate *bool    `json:"immediate,omitempty"`
+}

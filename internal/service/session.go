@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"go.mau.fi/whatsmeow"
 
@@ -108,20 +109,21 @@ func (s *SessionService) SessionBelongsToUser(sessionID, userID string) (bool, e
 }
 
 // Connection operations
-func (s *SessionService) Connect(ctx context.Context, userID string, session *model.Session) (map[string]interface{}, error) {
+func (s *SessionService) Connect(ctx context.Context, userID string, session *model.Session, immediate bool) (map[string]interface{}, error) {
 	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	key := s.clientKey(userID, session.ID)
 
 	if client, exists := s.clients[key]; exists {
 		if client.IsConnected() {
+			s.mu.Unlock()
 			return nil, errors.New("already connected")
 		}
 	}
 
 	client, err := wameow.NewClient(ctx, s.dbConnStr, session.ID)
 	if err != nil {
+		s.mu.Unlock()
 		return nil, fmt.Errorf("failed to create client: %w", err)
 	}
 
@@ -136,13 +138,28 @@ func (s *SessionService) Connect(ctx context.Context, userID string, session *mo
 	})
 
 	if err := client.Connect(ctx); err != nil {
+		s.mu.Unlock()
 		return nil, fmt.Errorf("failed to connect: %w", err)
 	}
 
 	s.clients[key] = client
+	s.mu.Unlock()
 
 	if err := s.sessionRepo.UpdateConnected(session.ID, 1); err != nil {
 		logger.Warnf("Failed to update connected status: %v", err)
+	}
+
+	if !immediate {
+		logger.Warnf("Waiting 10 seconds for connection verification...")
+		time.Sleep(10 * time.Second)
+
+		s.mu.RLock()
+		currentClient := s.clients[key]
+		s.mu.RUnlock()
+
+		if currentClient == nil || !currentClient.IsConnected() {
+			return nil, errors.New("failed to connect")
+		}
 	}
 
 	if client.IsLoggedIn() {
@@ -325,7 +342,7 @@ func (s *SessionService) ReconnectAll(ctx context.Context) {
 
 	for _, session := range sessions {
 		go func(sess model.Session) {
-			_, err := s.Connect(ctx, sess.UserID, &sess)
+			_, err := s.Connect(ctx, sess.UserID, &sess, true)
 			if err != nil {
 				logger.Warnf("Failed to reconnect session %s: %v", sess.ID, err)
 				s.sessionRepo.UpdateConnected(sess.ID, 0)
