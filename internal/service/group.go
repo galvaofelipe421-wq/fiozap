@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/types"
@@ -223,6 +224,137 @@ func (s *GroupService) SetTopic(ctx context.Context, userID, sessionID string, g
 	}
 
 	return client.SetGroupTopic(ctx, jid, "", "", topic)
+}
+
+func (s *GroupService) SetPhoto(ctx context.Context, userID, sessionID string, groupJID string, imageData []byte) (string, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return "", errors.New("no session")
+	}
+
+	jid, err := types.ParseJID(groupJID)
+	if err != nil {
+		return "", fmt.Errorf("invalid group JID: %w", err)
+	}
+
+	pictureID, err := client.SetGroupPhoto(ctx, jid, imageData)
+	if err != nil {
+		return "", fmt.Errorf("failed to set group photo: %w", err)
+	}
+
+	return pictureID, nil
+}
+
+func (s *GroupService) RemovePhoto(ctx context.Context, userID, sessionID string, groupJID string) error {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return errors.New("no session")
+	}
+
+	jid, err := types.ParseJID(groupJID)
+	if err != nil {
+		return fmt.Errorf("invalid group JID: %w", err)
+	}
+
+	_, err = client.SetGroupPhoto(ctx, jid, nil)
+	if err != nil {
+		return fmt.Errorf("failed to remove group photo: %w", err)
+	}
+
+	return nil
+}
+
+func (s *GroupService) SetAnnounce(ctx context.Context, userID, sessionID string, groupJID string, announce bool) error {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return errors.New("no session")
+	}
+
+	jid, err := types.ParseJID(groupJID)
+	if err != nil {
+		return fmt.Errorf("invalid group JID: %w", err)
+	}
+
+	return client.SetGroupAnnounce(ctx, jid, announce)
+}
+
+func (s *GroupService) SetLocked(ctx context.Context, userID, sessionID string, groupJID string, locked bool) error {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return errors.New("no session")
+	}
+
+	jid, err := types.ParseJID(groupJID)
+	if err != nil {
+		return fmt.Errorf("invalid group JID: %w", err)
+	}
+
+	return client.SetGroupLocked(ctx, jid, locked)
+}
+
+func (s *GroupService) SetEphemeral(ctx context.Context, userID, sessionID string, groupJID string, duration string) error {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return errors.New("no session")
+	}
+
+	_, err := types.ParseJID(groupJID)
+	if err != nil {
+		return fmt.Errorf("invalid group JID: %w", err)
+	}
+
+	var dur time.Duration
+	switch duration {
+	case "24h":
+		dur = 24 * time.Hour
+	case "7d":
+		dur = 7 * 24 * time.Hour
+	case "90d":
+		dur = 90 * 24 * time.Hour
+	case "off":
+		dur = 0
+	default:
+		return errors.New("invalid duration: use 24h, 7d, 90d, or off")
+	}
+
+	return client.SetDefaultDisappearingTimer(ctx, dur)
+}
+
+func (s *GroupService) Join(ctx context.Context, userID, sessionID string, code string) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	groupJID, err := client.JoinGroupWithLink(ctx, code)
+	if err != nil {
+		return nil, fmt.Errorf("failed to join group: %w", err)
+	}
+
+	return map[string]interface{}{
+		"jid":     groupJID.String(),
+		"details": "Group joined successfully",
+	}, nil
+}
+
+func (s *GroupService) GetInviteInfo(ctx context.Context, userID, sessionID string, code string) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	info, err := client.GetGroupInfoFromLink(ctx, code)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get group info from link: %w", err)
+	}
+
+	return map[string]interface{}{
+		"jid":               info.JID.String(),
+		"name":              info.Name,
+		"topic":             info.Topic,
+		"owner":             info.OwnerJID.String(),
+		"participant_count": len(info.Participants),
+	}, nil
 }
 
 func parseGroupJID(phone string) (types.JID, error) {

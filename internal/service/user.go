@@ -190,6 +190,76 @@ func (s *UserService) ChatPresence(ctx context.Context, userID, sessionID string
 	return client.SendChatPresence(ctx, jid, chatState, chatMedia)
 }
 
+func (s *UserService) RejectCall(ctx context.Context, userID, sessionID string, callFrom, callID string) error {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return errors.New("no session")
+	}
+
+	jid, err := parseUserJID(callFrom)
+	if err != nil {
+		return err
+	}
+
+	return client.RejectCall(ctx, jid, callID)
+}
+
+func (s *UserService) GetNewsletters(ctx context.Context, userID, sessionID string) ([]map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	newsletters, err := client.GetSubscribedNewsletters(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get newsletters: %w", err)
+	}
+
+	var result []map[string]interface{}
+	for _, n := range newsletters {
+		pictureURL := ""
+		if n.ThreadMeta.Picture != nil {
+			pictureURL = n.ThreadMeta.Picture.URL
+		}
+		result = append(result, map[string]interface{}{
+			"jid":              n.ID.String(),
+			"name":             n.ThreadMeta.Name.Text,
+			"description":      n.ThreadMeta.Description.Text,
+			"subscriber_count": n.ThreadMeta.SubscriberCount,
+			"verification":     string(n.ThreadMeta.VerificationState),
+			"picture_url":      pictureURL,
+		})
+	}
+
+	return result, nil
+}
+
+func (s *UserService) GetUserLID(ctx context.Context, userID, sessionID string, phone string) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	jid, err := parseUserJID(phone)
+	if err != nil {
+		return nil, err
+	}
+
+	lid, err := client.Store.LIDs.GetLIDForPN(ctx, jid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get LID: %w", err)
+	}
+
+	if lid.IsEmpty() {
+		return nil, errors.New("LID not found for this number")
+	}
+
+	return map[string]interface{}{
+		"jid": jid.String(),
+		"lid": lid.String(),
+	}, nil
+}
+
 func parseUserJID(phone string) (types.JID, error) {
 	if phone == "" {
 		return types.JID{}, errors.New("phone is required")

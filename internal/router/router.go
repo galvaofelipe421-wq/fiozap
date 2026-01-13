@@ -105,6 +105,30 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 				r.Post("/contact", messageHandler.SendContact)
 				r.Post("/reaction", messageHandler.React)
 				r.Post("/delete", messageHandler.Delete)
+				r.Post("/sticker", messageHandler.SendSticker)
+				r.Post("/poll", messageHandler.SendPoll)
+				r.Post("/list", messageHandler.SendList)
+				r.Post("/buttons", messageHandler.SendButtons)
+				r.Post("/edit", messageHandler.Edit)
+			})
+
+			r.Route("/chat", func(r chi.Router) {
+				r.Post("/presence", userHandler.ChatPresence)
+				r.Post("/markread", messageHandler.MarkRead)
+				r.Post("/archive", messageHandler.ArchiveChat)
+				r.Post("/downloadimage", messageHandler.DownloadImage)
+				r.Post("/downloadvideo", messageHandler.DownloadVideo)
+				r.Post("/downloadaudio", messageHandler.DownloadAudio)
+				r.Post("/downloaddocument", messageHandler.DownloadDocument)
+				r.Post("/downloadsticker", messageHandler.DownloadSticker)
+			})
+
+			r.Route("/status", func(r chi.Router) {
+				r.Post("/text", messageHandler.SetStatusText)
+			})
+
+			r.Route("/call", func(r chi.Router) {
+				r.Post("/reject", userHandler.RejectCall)
 			})
 
 			r.Route("/user", func(r chi.Router) {
@@ -113,8 +137,9 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 				r.Post("/avatar", userHandler.GetAvatar)
 				r.Get("/contacts", userHandler.GetContacts)
 				r.Post("/presence", userHandler.SendPresence)
+				r.Get("/newsletters", userHandler.GetNewsletters)
+				r.Get("/getlid", userHandler.GetUserLID)
 			})
-			r.Post("/chat/presence", userHandler.ChatPresence)
 
 			r.Route("/group", func(r chi.Router) {
 				r.Post("/create", groupHandler.Create)
@@ -125,6 +150,13 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 				r.Post("/updateparticipants", groupHandler.UpdateParticipants)
 				r.Post("/name", groupHandler.SetName)
 				r.Post("/topic", groupHandler.SetTopic)
+				r.Post("/photo", groupHandler.SetPhoto)
+				r.Post("/photo/remove", groupHandler.RemovePhoto)
+				r.Post("/announce", groupHandler.SetAnnounce)
+				r.Post("/locked", groupHandler.SetLocked)
+				r.Post("/ephemeral", groupHandler.SetEphemeral)
+				r.Post("/join", groupHandler.Join)
+				r.Post("/inviteinfo", groupHandler.GetInviteInfo)
 			})
 
 			r.Route("/webhook", func(r chi.Router) {

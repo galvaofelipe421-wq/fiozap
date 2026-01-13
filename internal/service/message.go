@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/vincent-petithory/dataurl"
 	"go.mau.fi/whatsmeow"
+	"go.mau.fi/whatsmeow/appstate"
 	"go.mau.fi/whatsmeow/proto/waCommon"
 	"go.mau.fi/whatsmeow/proto/waE2E"
 	"go.mau.fi/whatsmeow/types"
@@ -442,6 +444,459 @@ func (s *MessageService) Delete(ctx context.Context, userID, sessionID string, r
 	return map[string]interface{}{
 		"details":   "Deleted",
 		"timestamp": resp.Timestamp.Unix(),
+	}, nil
+}
+
+func (s *MessageService) SendSticker(ctx context.Context, userID, sessionID string, req *model.StickerMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	recipient, err := parseJID(req.Phone)
+	if err != nil {
+		return nil, err
+	}
+
+	msgID := req.ID
+	if msgID == "" {
+		msgID = client.GenerateMessageID()
+	}
+
+	var filedata []byte
+	if strings.HasPrefix(req.Sticker, "data:image") {
+		dataURL, err := dataurl.DecodeString(req.Sticker)
+		if err != nil {
+			return nil, errors.New("invalid base64 sticker data")
+		}
+		filedata = dataURL.Data
+	} else {
+		return nil, errors.New("sticker must be base64 encoded (data:image/webp;base64,...)")
+	}
+
+	uploaded, err := client.Upload(ctx, filedata, whatsmeow.MediaImage)
+	if err != nil {
+		return nil, fmt.Errorf("failed to upload sticker: %w", err)
+	}
+
+	mimeType := req.MimeType
+	if mimeType == "" {
+		mimeType = "image/webp"
+	}
+
+	msg := &waE2E.Message{
+		StickerMessage: &waE2E.StickerMessage{
+			URL:           proto.String(uploaded.URL),
+			DirectPath:    proto.String(uploaded.DirectPath),
+			MediaKey:      uploaded.MediaKey,
+			Mimetype:      proto.String(mimeType),
+			FileEncSHA256: uploaded.FileEncSHA256,
+			FileSHA256:    uploaded.FileSHA256,
+			FileLength:    proto.Uint64(uint64(len(filedata))),
+			PngThumbnail:  req.PngThumbnail,
+		},
+	}
+
+	resp, err := client.SendMessage(ctx, recipient, msg, whatsmeow.SendRequestExtra{ID: msgID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to send sticker: %w", err)
+	}
+
+	return map[string]interface{}{
+		"details":   "Sent",
+		"timestamp": resp.Timestamp.Unix(),
+		"id":        msgID,
+	}, nil
+}
+
+func (s *MessageService) SendPoll(ctx context.Context, userID, sessionID string, req *model.PollMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	recipient, err := parseJID(req.Phone)
+	if err != nil {
+		return nil, err
+	}
+
+	msgID := req.ID
+	if msgID == "" {
+		msgID = client.GenerateMessageID()
+	}
+
+	pollMessage := client.BuildPollCreation(req.Header, req.Options, 1)
+	resp, err := client.SendMessage(ctx, recipient, pollMessage, whatsmeow.SendRequestExtra{ID: msgID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to send poll: %w", err)
+	}
+
+	return map[string]interface{}{
+		"details":   "Poll sent",
+		"timestamp": resp.Timestamp.Unix(),
+		"id":        msgID,
+	}, nil
+}
+
+func (s *MessageService) SendList(ctx context.Context, userID, sessionID string, req *model.ListMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	recipient, err := parseJID(req.Phone)
+	if err != nil {
+		return nil, err
+	}
+
+	msgID := req.ID
+	if msgID == "" {
+		msgID = client.GenerateMessageID()
+	}
+
+	var sections []*waE2E.ListMessage_Section
+	for _, sec := range req.Sections {
+		var rows []*waE2E.ListMessage_Row
+		for _, item := range sec.Rows {
+			rowID := item.RowID
+			if rowID == "" {
+				rowID = item.Title
+			}
+			rows = append(rows, &waE2E.ListMessage_Row{
+				RowID:       proto.String(rowID),
+				Title:       proto.String(item.Title),
+				Description: proto.String(item.Desc),
+			})
+		}
+		sections = append(sections, &waE2E.ListMessage_Section{
+			Title: proto.String(sec.Title),
+			Rows:  rows,
+		})
+	}
+
+	listMsg := &waE2E.ListMessage{
+		Title:       proto.String(req.Title),
+		Description: proto.String(req.Desc),
+		ButtonText:  proto.String(req.ButtonText),
+		ListType:    waE2E.ListMessage_SINGLE_SELECT.Enum(),
+		Sections:    sections,
+	}
+
+	if req.FooterText != "" {
+		listMsg.FooterText = proto.String(req.FooterText)
+	}
+
+	msg := &waE2E.Message{
+		ViewOnceMessage: &waE2E.FutureProofMessage{
+			Message: &waE2E.Message{
+				ListMessage: listMsg,
+			},
+		},
+	}
+
+	resp, err := client.SendMessage(ctx, recipient, msg, whatsmeow.SendRequestExtra{ID: msgID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to send list: %w", err)
+	}
+
+	return map[string]interface{}{
+		"details":   "Sent",
+		"timestamp": resp.Timestamp.Unix(),
+		"id":        msgID,
+	}, nil
+}
+
+func (s *MessageService) SendButtons(ctx context.Context, userID, sessionID string, req *model.ButtonsMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	recipient, err := parseJID(req.Phone)
+	if err != nil {
+		return nil, err
+	}
+
+	msgID := req.ID
+	if msgID == "" {
+		msgID = client.GenerateMessageID()
+	}
+
+	var buttons []*waE2E.ButtonsMessage_Button
+	for _, item := range req.Buttons {
+		buttons = append(buttons, &waE2E.ButtonsMessage_Button{
+			ButtonID:       proto.String(item.ButtonID),
+			ButtonText:     &waE2E.ButtonsMessage_Button_ButtonText{DisplayText: proto.String(item.ButtonText)},
+			Type:           waE2E.ButtonsMessage_Button_RESPONSE.Enum(),
+			NativeFlowInfo: &waE2E.ButtonsMessage_Button_NativeFlowInfo{},
+		})
+	}
+
+	buttonsMsg := &waE2E.ButtonsMessage{
+		ContentText: proto.String(req.Title),
+		HeaderType:  waE2E.ButtonsMessage_EMPTY.Enum(),
+		Buttons:     buttons,
+	}
+
+	msg := &waE2E.Message{
+		ViewOnceMessage: &waE2E.FutureProofMessage{
+			Message: &waE2E.Message{
+				ButtonsMessage: buttonsMsg,
+			},
+		},
+	}
+
+	resp, err := client.SendMessage(ctx, recipient, msg, whatsmeow.SendRequestExtra{ID: msgID})
+	if err != nil {
+		return nil, fmt.Errorf("failed to send buttons: %w", err)
+	}
+
+	return map[string]interface{}{
+		"details":   "Sent",
+		"timestamp": resp.Timestamp.Unix(),
+		"id":        msgID,
+	}, nil
+}
+
+func (s *MessageService) EditMessage(ctx context.Context, userID, sessionID string, req *model.EditMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	recipient, err := parseJID(req.Phone)
+	if err != nil {
+		return nil, err
+	}
+
+	msg := &waE2E.Message{
+		ExtendedTextMessage: &waE2E.ExtendedTextMessage{
+			Text: proto.String(req.Body),
+		},
+	}
+
+	editMsg := client.BuildEdit(recipient, req.MessageID, msg)
+	resp, err := client.SendMessage(ctx, recipient, editMsg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to edit message: %w", err)
+	}
+
+	return map[string]interface{}{
+		"details":   "Edited",
+		"timestamp": resp.Timestamp.Unix(),
+		"id":        req.MessageID,
+	}, nil
+}
+
+func (s *MessageService) MarkRead(ctx context.Context, userID, sessionID string, req *model.MarkReadMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	chatJID, err := parseJID(req.ChatPhone)
+	if err != nil {
+		return nil, err
+	}
+
+	var senderJID types.JID
+	if req.SenderPhone != "" {
+		senderJID, err = parseJID(req.SenderPhone)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err = client.MarkRead(ctx, req.IDs, time.Now(), chatJID, senderJID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to mark as read: %w", err)
+	}
+
+	return map[string]interface{}{
+		"details": "Messages marked as read",
+	}, nil
+}
+
+func (s *MessageService) SetStatusText(ctx context.Context, userID, sessionID string, req *model.StatusTextMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	err := client.SetStatusMessage(ctx, req.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to set status: %w", err)
+	}
+
+	return map[string]interface{}{
+		"details": "Status set",
+	}, nil
+}
+
+func (s *MessageService) DownloadImage(ctx context.Context, userID, sessionID string, req *model.DownloadMediaMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	msg := &waE2E.Message{ImageMessage: &waE2E.ImageMessage{
+		URL:           proto.String(req.URL),
+		DirectPath:    proto.String(req.DirectPath),
+		MediaKey:      req.MediaKey,
+		Mimetype:      proto.String(req.MimeType),
+		FileEncSHA256: req.FileEncSHA256,
+		FileSHA256:    req.FileSHA256,
+		FileLength:    &req.FileLength,
+	}}
+
+	data, err := client.Download(ctx, msg.GetImageMessage())
+	if err != nil {
+		return nil, fmt.Errorf("failed to download image: %w", err)
+	}
+
+	dataURL := dataurl.New(data, req.MimeType)
+	return map[string]interface{}{
+		"mimetype": req.MimeType,
+		"data":     dataURL.String(),
+	}, nil
+}
+
+func (s *MessageService) DownloadVideo(ctx context.Context, userID, sessionID string, req *model.DownloadMediaMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	msg := &waE2E.Message{VideoMessage: &waE2E.VideoMessage{
+		URL:           proto.String(req.URL),
+		DirectPath:    proto.String(req.DirectPath),
+		MediaKey:      req.MediaKey,
+		Mimetype:      proto.String(req.MimeType),
+		FileEncSHA256: req.FileEncSHA256,
+		FileSHA256:    req.FileSHA256,
+		FileLength:    &req.FileLength,
+	}}
+
+	data, err := client.Download(ctx, msg.GetVideoMessage())
+	if err != nil {
+		return nil, fmt.Errorf("failed to download video: %w", err)
+	}
+
+	dataURL := dataurl.New(data, req.MimeType)
+	return map[string]interface{}{
+		"mimetype": req.MimeType,
+		"data":     dataURL.String(),
+	}, nil
+}
+
+func (s *MessageService) DownloadAudio(ctx context.Context, userID, sessionID string, req *model.DownloadMediaMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	msg := &waE2E.Message{AudioMessage: &waE2E.AudioMessage{
+		URL:           proto.String(req.URL),
+		DirectPath:    proto.String(req.DirectPath),
+		MediaKey:      req.MediaKey,
+		Mimetype:      proto.String(req.MimeType),
+		FileEncSHA256: req.FileEncSHA256,
+		FileSHA256:    req.FileSHA256,
+		FileLength:    &req.FileLength,
+	}}
+
+	data, err := client.Download(ctx, msg.GetAudioMessage())
+	if err != nil {
+		return nil, fmt.Errorf("failed to download audio: %w", err)
+	}
+
+	dataURL := dataurl.New(data, req.MimeType)
+	return map[string]interface{}{
+		"mimetype": req.MimeType,
+		"data":     dataURL.String(),
+	}, nil
+}
+
+func (s *MessageService) DownloadDocument(ctx context.Context, userID, sessionID string, req *model.DownloadMediaMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	msg := &waE2E.Message{DocumentMessage: &waE2E.DocumentMessage{
+		URL:           proto.String(req.URL),
+		DirectPath:    proto.String(req.DirectPath),
+		MediaKey:      req.MediaKey,
+		Mimetype:      proto.String(req.MimeType),
+		FileEncSHA256: req.FileEncSHA256,
+		FileSHA256:    req.FileSHA256,
+		FileLength:    &req.FileLength,
+	}}
+
+	data, err := client.Download(ctx, msg.GetDocumentMessage())
+	if err != nil {
+		return nil, fmt.Errorf("failed to download document: %w", err)
+	}
+
+	dataURL := dataurl.New(data, req.MimeType)
+	return map[string]interface{}{
+		"mimetype": req.MimeType,
+		"data":     dataURL.String(),
+	}, nil
+}
+
+func (s *MessageService) DownloadSticker(ctx context.Context, userID, sessionID string, req *model.DownloadMediaMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	msg := &waE2E.Message{StickerMessage: &waE2E.StickerMessage{
+		URL:           proto.String(req.URL),
+		DirectPath:    proto.String(req.DirectPath),
+		MediaKey:      req.MediaKey,
+		Mimetype:      proto.String(req.MimeType),
+		FileEncSHA256: req.FileEncSHA256,
+		FileSHA256:    req.FileSHA256,
+		FileLength:    &req.FileLength,
+	}}
+
+	data, err := client.Download(ctx, msg.GetStickerMessage())
+	if err != nil {
+		return nil, fmt.Errorf("failed to download sticker: %w", err)
+	}
+
+	dataURL := dataurl.New(data, req.MimeType)
+	return map[string]interface{}{
+		"mimetype": req.MimeType,
+		"data":     dataURL.String(),
+	}, nil
+}
+
+func (s *MessageService) ArchiveChat(ctx context.Context, userID, sessionID string, req *model.ArchiveChatMessage) (map[string]interface{}, error) {
+	client := s.sessionService.GetWhatsmeowClient(userID, sessionID)
+	if client == nil {
+		return nil, errors.New("no session")
+	}
+
+	chatJID, err := parseJID(req.Phone)
+	if err != nil {
+		return nil, err
+	}
+
+	patch := appstate.BuildArchive(chatJID, req.Archive, time.Time{}, nil)
+	err = client.SendAppState(ctx, patch)
+	if err != nil {
+		return nil, fmt.Errorf("failed to archive chat: %w", err)
+	}
+
+	actionDesc := "archived"
+	if !req.Archive {
+		actionDesc = "unarchived"
+	}
+
+	return map[string]interface{}{
+		"details": "Chat " + actionDesc,
 	}, nil
 }
 

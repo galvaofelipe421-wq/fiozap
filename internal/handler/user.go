@@ -256,3 +256,109 @@ func (h *UserHandler) ChatPresence(w http.ResponseWriter, r *http.Request) {
 
 	model.RespondOK(w, map[string]string{"details": "Chat presence sent"})
 }
+
+// RejectCall godoc
+// @Summary Reject incoming call
+// @Description Reject an incoming WhatsApp call
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param request body model.RejectCallRequest true "Call rejection data"
+// @Success 200 {object} model.Response
+// @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
+// @Security ApiKeyAuth
+// @Router /sessions/{sessionId}/call/reject [post]
+func (h *UserHandler) RejectCall(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r.Context())
+	session := middleware.GetSessionFromContext(r.Context())
+	if user == nil || session == nil {
+		model.RespondUnauthorized(w, errors.New("user not found"))
+		return
+	}
+
+	var req model.RejectCallRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		model.RespondBadRequest(w, errors.New("invalid payload"))
+		return
+	}
+
+	if req.CallFrom == "" {
+		model.RespondBadRequest(w, errors.New("call_from is required"))
+		return
+	}
+
+	if req.CallID == "" {
+		model.RespondBadRequest(w, errors.New("call_id is required"))
+		return
+	}
+
+	err := h.userService.RejectCall(r.Context(), user.ID, session.ID, req.CallFrom, req.CallID)
+	if err != nil {
+		model.RespondInternalError(w, err)
+		return
+	}
+
+	model.RespondOK(w, map[string]string{"details": "Call rejected"})
+}
+
+// GetNewsletters godoc
+// @Summary Get subscribed newsletters
+// @Description Get list of subscribed WhatsApp channels/newsletters
+// @Tags User
+// @Produce json
+// @Success 200 {object} model.Response
+// @Failure 401 {object} model.Response
+// @Param sessionId path string true "Session ID"
+// @Security ApiKeyAuth
+// @Router /sessions/{sessionId}/user/newsletters [get]
+func (h *UserHandler) GetNewsletters(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r.Context())
+	session := middleware.GetSessionFromContext(r.Context())
+	if user == nil || session == nil {
+		model.RespondUnauthorized(w, errors.New("user not found"))
+		return
+	}
+
+	result, err := h.userService.GetNewsletters(r.Context(), user.ID, session.ID)
+	if err != nil {
+		model.RespondInternalError(w, err)
+		return
+	}
+
+	model.RespondOK(w, result)
+}
+
+// GetUserLID godoc
+// @Summary Get user LID
+// @Description Get the Local ID (LID) for a phone number
+// @Tags User
+// @Produce json
+// @Param phone query string true "Phone number"
+// @Success 200 {object} model.Response
+// @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
+// @Security ApiKeyAuth
+// @Router /sessions/{sessionId}/user/getlid [get]
+func (h *UserHandler) GetUserLID(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r.Context())
+	session := middleware.GetSessionFromContext(r.Context())
+	if user == nil || session == nil {
+		model.RespondUnauthorized(w, errors.New("user not found"))
+		return
+	}
+
+	phone := r.URL.Query().Get("phone")
+	if phone == "" {
+		model.RespondBadRequest(w, errors.New("phone is required"))
+		return
+	}
+
+	result, err := h.userService.GetUserLID(r.Context(), user.ID, session.ID, phone)
+	if err != nil {
+		model.RespondInternalError(w, err)
+		return
+	}
+
+	model.RespondOK(w, result)
+}

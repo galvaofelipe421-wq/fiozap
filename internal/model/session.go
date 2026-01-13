@@ -29,8 +29,6 @@ type SessionUpdateRequest struct {
 	ProxyURL *string `json:"proxyUrl,omitempty"`
 }
 
-
-
 type SessionStatusResponse struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
