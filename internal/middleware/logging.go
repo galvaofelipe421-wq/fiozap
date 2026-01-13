@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/rs/zerolog"
+
 	"fiozap/internal/logger"
 )
 
@@ -36,13 +38,25 @@ func Logging(next http.Handler) http.Handler {
 		next.ServeHTTP(rw, r)
 
 		duration := time.Since(start)
+		log := logger.Get()
 
-		logger.Infof("%s %s %d %s %s",
-			r.Method,
-			r.URL.Path,
-			rw.status,
-			duration.String(),
-			r.RemoteAddr,
-		)
+		var event *zerolog.Event
+		switch {
+		case rw.status >= 500:
+			event = log.Error()
+		case rw.status >= 400:
+			event = log.Warn()
+		default:
+			event = log.Info()
+		}
+
+		event.
+			Str("method", r.Method).
+			Str("path", r.URL.Path).
+			Int("status", rw.status).
+			Int("bytes", rw.size).
+			Dur("latency", duration).
+			Str("ip", r.RemoteAddr).
+			Msg("http")
 	})
 }

@@ -2,8 +2,10 @@ package router
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/jmoiron/sqlx"
 	httpSwagger "github.com/swaggo/http-swagger"
 
@@ -24,39 +26,43 @@ type Router struct {
 func New(cfg *config.Config, db *sqlx.DB) *Router {
 	r := chi.NewRouter()
 
+	// Middlewares
+	r.Use(chiMiddleware.RealIP)
+	r.Use(chiMiddleware.Recoverer)
+	r.Use(chiMiddleware.Timeout(60 * time.Second))
+	r.Use(middleware.Logging)
+	r.Use(cors)
+
+	// Repositories
 	userRepo := repository.NewUserRepository(db)
 	sessionRepo := repository.NewSessionRepository(db)
 	webhookRepo := repository.NewWebhookRepository(db)
 
+	// Middlewares
 	authMiddleware := middleware.NewAuthMiddleware(userRepo)
 	adminMiddleware := middleware.NewAdminMiddleware(cfg.AdminToken)
 	sessionMiddleware := middleware.NewSessionMiddleware(sessionRepo)
 
-	healthHandler := handler.NewHealthHandler()
-	adminHandler := handler.NewAdminHandler(userRepo)
-
+	// Services
 	sessionService := service.NewSessionService(userRepo, sessionRepo, cfg)
 	sessionService.SetWebhookRepo(webhookRepo)
-
 	dispatcher := webhook.NewDispatcher(webhookRepo, sessionRepo)
 	sessionService.SetDispatcher(dispatcher)
 
-	sessionHandler := handler.NewSessionHandler(sessionService)
-
 	messageService := service.NewMessageService(sessionService)
-	messageHandler := handler.NewMessageHandler(messageService)
-
 	userService := service.NewUserService(sessionService)
-	userHandler := handler.NewUserHandler(userService)
-
 	groupService := service.NewGroupService(sessionService)
-	groupHandler := handler.NewGroupHandler(groupService)
 
+	// Handlers
+	healthHandler := handler.NewHealthHandler()
+	adminHandler := handler.NewAdminHandler(userRepo)
+	sessionHandler := handler.NewSessionHandler(sessionService)
+	messageHandler := handler.NewMessageHandler(messageService)
+	userHandler := handler.NewUserHandler(userService)
+	groupHandler := handler.NewGroupHandler(groupService)
 	webhookHandler := handler.NewWebhookHandler(sessionRepo)
 
-	r.Use(cors)
-	r.Use(middleware.Logging)
-
+	// Public routes
 	r.Get("/health", healthHandler.GetHealth)
 	r.Mount("/swagger", httpSwagger.WrapHandler)
 
@@ -71,24 +77,17 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 		r.Get("/sessions", sessionHandler.AdminListAllSessions)
 	})
 
-	// API routes (authenticated)
+	// API routes
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.Authenticate)
-
-		// Sessions CRUD (user manages own sessions)
 		r.Get("/sessions", sessionHandler.ListSessions)
 		r.Post("/sessions", sessionHandler.CreateSession)
 
-		// Session-specific routes (require session validation)
 		r.Route("/sessions/{sessionId}", func(r chi.Router) {
 			r.Use(sessionMiddleware.ValidateSession)
-
-			// Session management
 			r.Get("/", sessionHandler.GetSession)
 			r.Put("/", sessionHandler.UpdateSession)
 			r.Delete("/", sessionHandler.DeleteSession)
-
-			// Session connection
 			r.Post("/connect", sessionHandler.Connect)
 			r.Post("/disconnect", sessionHandler.Disconnect)
 			r.Post("/logout", sessionHandler.Logout)
@@ -96,40 +95,44 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 			r.Get("/qr", sessionHandler.GetQR)
 			r.Post("/pairphone", sessionHandler.PairPhone)
 
-			// Messages (per session)
-			r.Post("/messages/text", messageHandler.SendText)
-			r.Post("/messages/image", messageHandler.SendImage)
-			r.Post("/messages/audio", messageHandler.SendAudio)
-			r.Post("/messages/video", messageHandler.SendVideo)
-			r.Post("/messages/document", messageHandler.SendDocument)
-			r.Post("/messages/location", messageHandler.SendLocation)
-			r.Post("/messages/contact", messageHandler.SendContact)
-			r.Post("/messages/reaction", messageHandler.React)
-			r.Post("/messages/delete", messageHandler.Delete)
+			r.Route("/messages", func(r chi.Router) {
+				r.Post("/text", messageHandler.SendText)
+				r.Post("/image", messageHandler.SendImage)
+				r.Post("/audio", messageHandler.SendAudio)
+				r.Post("/video", messageHandler.SendVideo)
+				r.Post("/document", messageHandler.SendDocument)
+				r.Post("/location", messageHandler.SendLocation)
+				r.Post("/contact", messageHandler.SendContact)
+				r.Post("/reaction", messageHandler.React)
+				r.Post("/delete", messageHandler.Delete)
+			})
 
-			// User operations (per session)
-			r.Post("/user/info", userHandler.GetInfo)
-			r.Post("/user/check", userHandler.CheckUser)
-			r.Post("/user/avatar", userHandler.GetAvatar)
-			r.Get("/user/contacts", userHandler.GetContacts)
-			r.Post("/user/presence", userHandler.SendPresence)
+			r.Route("/user", func(r chi.Router) {
+				r.Post("/info", userHandler.GetInfo)
+				r.Post("/check", userHandler.CheckUser)
+				r.Post("/avatar", userHandler.GetAvatar)
+				r.Get("/contacts", userHandler.GetContacts)
+				r.Post("/presence", userHandler.SendPresence)
+			})
 			r.Post("/chat/presence", userHandler.ChatPresence)
 
-			// Group operations (per session)
-			r.Post("/group/create", groupHandler.Create)
-			r.Get("/group/list", groupHandler.List)
-			r.Get("/group/info", groupHandler.GetInfo)
-			r.Get("/group/invitelink", groupHandler.GetInviteLink)
-			r.Post("/group/leave", groupHandler.Leave)
-			r.Post("/group/updateparticipants", groupHandler.UpdateParticipants)
-			r.Post("/group/name", groupHandler.SetName)
-			r.Post("/group/topic", groupHandler.SetTopic)
+			r.Route("/group", func(r chi.Router) {
+				r.Post("/create", groupHandler.Create)
+				r.Get("/list", groupHandler.List)
+				r.Get("/info", groupHandler.GetInfo)
+				r.Get("/invitelink", groupHandler.GetInviteLink)
+				r.Post("/leave", groupHandler.Leave)
+				r.Post("/updateparticipants", groupHandler.UpdateParticipants)
+				r.Post("/name", groupHandler.SetName)
+				r.Post("/topic", groupHandler.SetTopic)
+			})
 
-			// Webhook (per session)
-			r.Get("/webhook", webhookHandler.Get)
-			r.Post("/webhook", webhookHandler.Set)
-			r.Put("/webhook", webhookHandler.Update)
-			r.Delete("/webhook", webhookHandler.Delete)
+			r.Route("/webhook", func(r chi.Router) {
+				r.Get("/", webhookHandler.Get)
+				r.Post("/", webhookHandler.Set)
+				r.Put("/", webhookHandler.Update)
+				r.Delete("/", webhookHandler.Delete)
+			})
 		})
 	})
 

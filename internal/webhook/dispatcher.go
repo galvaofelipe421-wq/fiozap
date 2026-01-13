@@ -31,13 +31,13 @@ func NewDispatcher(webhookRepo *repository.WebhookRepository, sessionRepo *repos
 func (d *Dispatcher) Start() {
 	d.wg.Add(1)
 	go d.processLoop()
-	logger.Info("Webhook dispatcher started")
+	logger.Component("webhook").Str("status", "running").Msg("dispatcher started")
 }
 
 func (d *Dispatcher) Stop() {
 	close(d.stopCh)
 	d.wg.Wait()
-	logger.Info("Webhook dispatcher stopped")
+	logger.Component("webhook").Str("status", "stopped").Msg("dispatcher stopped")
 }
 
 func (d *Dispatcher) processLoop() {
@@ -59,20 +59,20 @@ func (d *Dispatcher) processLoop() {
 func (d *Dispatcher) processPending() {
 	events, err := d.webhookRepo.GetPending(50)
 	if err != nil {
-		logger.Errorf("Failed to get pending webhooks: %v", err)
+		logger.WithError(err).Str("component", "webhook").Msg("failed to get pending")
 		return
 	}
 
 	for _, event := range events {
 		if event.SessionID == "" {
-			logger.Warnf("Webhook %d has no session ID, skipping", event.ID)
+			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Msg("no session_id, skipping")
 			d.webhookRepo.MarkFailed(event.ID)
 			continue
 		}
 
 		session, err := d.sessionRepo.GetByID(event.SessionID)
 		if err != nil {
-			logger.Warnf("Session not found for webhook %d: %v", event.ID, err)
+			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Err(err).Msg("session not found")
 			d.webhookRepo.MarkFailed(event.ID)
 			continue
 		}
@@ -101,10 +101,10 @@ func (d *Dispatcher) processPending() {
 		cancel()
 
 		if err != nil {
-			logger.Warnf("Failed to send webhook %d: %v", event.ID, err)
+			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Err(err).Msg("send failed")
 			d.webhookRepo.MarkFailed(event.ID)
 		} else {
-			logger.Debugf("Webhook %d sent successfully", event.ID)
+			logger.Get().Debug().Str("component", "webhook").Int64("id", event.ID).Msg("sent")
 			d.webhookRepo.MarkSent(event.ID)
 		}
 	}

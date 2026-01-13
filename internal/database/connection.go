@@ -27,7 +27,11 @@ func Connect(cfg *config.Config) (*sqlx.DB, error) {
 		return nil, fmt.Errorf("failed to ping postgres: %w", err)
 	}
 
-	logger.Infof("Connected to PostgreSQL at %s:%s", cfg.DBHost, cfg.DBPort)
+	logger.Component("database").
+		Str("host", cfg.DBHost).
+		Str("port", cfg.DBPort).
+		Str("name", cfg.DBName).
+		Msg("connected")
 	return db, nil
 }
 
@@ -45,6 +49,10 @@ func ConnectDBUtil(cfg *config.Config) (*dbutil.Database, error) {
 	db.Owner = "fiozap"
 	db.VersionTable = migration.VersionTable
 
-	logger.Infof("Connected to PostgreSQL at %s:%s", cfg.DBHost, cfg.DBPort)
+	logger.Component("database").
+		Str("host", cfg.DBHost).
+		Str("port", cfg.DBPort).
+		Str("name", cfg.DBName).
+		Msg("connected")
 	return db, nil
 }

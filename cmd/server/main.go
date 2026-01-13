@@ -49,21 +49,24 @@ func main() {
 	}
 
 	logger.Init(cfg.LogLevel, cfg.LogType == "console")
-	logger.Info("Starting FioZap API...")
+	logger.Component("server").Str("version", "1.0").Msg("starting")
 
 	dbUtil, err := database.ConnectDBUtil(cfg)
 	if err != nil {
-		logger.Fatalf("Failed to connect to database: %v", err)
+		logger.WithError(err).Msg("failed to connect to database")
+		os.Exit(1)
 	}
 	defer dbUtil.Close()
 
 	if err := migration.Run(ctx, dbUtil); err != nil {
-		logger.Fatalf("Failed to run migrations: %v", err)
+		logger.WithError(err).Msg("failed to run migrations")
+		os.Exit(1)
 	}
 
 	db, err := database.Connect(cfg)
 	if err != nil {
-		logger.Fatalf("Failed to connect to database for queries: %v", err)
+		logger.WithError(err).Msg("failed to connect to database")
+		os.Exit(1)
 	}
 	defer db.Close()
 
@@ -89,22 +92,26 @@ func main() {
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		logger.Infof("Server started on %s:%s", cfg.Address, cfg.Port)
-		logger.Infof("Admin token: %s", cfg.AdminToken)
+		logger.Component("server").
+			Str("addr", cfg.Address).
+			Str("port", cfg.Port).
+			Msg("listening")
+		logger.Component("server").Str("admin_token", cfg.AdminToken).Msg("config")
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Fatalf("Server error: %v", err)
+			logger.WithError(err).Msg("server error")
+			os.Exit(1)
 		}
 	}()
 
 	<-done
-	logger.Warn("Shutting down server...")
+	logger.Component("server").Msg("shutting down")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Errorf("Server shutdown error: %v", err)
+		logger.WithError(err).Msg("shutdown error")
 	}
 
-	logger.Info("Server stopped")
+	logger.Component("server").Msg("stopped")
 }

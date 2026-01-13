@@ -12,7 +12,7 @@ import (
 const VersionTable = "fzversion"
 
 func Run(ctx context.Context, db *dbutil.Database) error {
-	logger.Info("Running database migrations...")
+	logger.Component("database").Msg("running migrations")
 
 	db.UpgradeTable = upgrades.Table
 
@@ -20,6 +20,6 @@ func Run(ctx context.Context, db *dbutil.Database) error {
 		return err
 	}
 
-	logger.Info("Migrations completed")
+	logger.Component("database").Msg("migrations completed")
 	return nil
 }

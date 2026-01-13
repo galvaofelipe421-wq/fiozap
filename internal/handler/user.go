@@ -27,8 +27,9 @@ func NewUserHandler(userService *service.UserService) *UserHandler {
 // @Param request body object{phone=[]string} true "Phone numbers"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /user/info [post]
+// @Router /sessions/{sessionId}/user/info [post]
 func (h *UserHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -68,8 +69,9 @@ func (h *UserHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 // @Param request body object{phone=[]string} true "Phone numbers"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /user/check [post]
+// @Router /sessions/{sessionId}/user/check [post]
 func (h *UserHandler) CheckUser(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -109,8 +111,9 @@ func (h *UserHandler) CheckUser(w http.ResponseWriter, r *http.Request) {
 // @Param request body object{phone=string,preview=bool} true "Phone and preview option"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /user/avatar [post]
+// @Router /sessions/{sessionId}/user/avatar [post]
 func (h *UserHandler) GetAvatar(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -149,8 +152,9 @@ func (h *UserHandler) GetAvatar(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /user/contacts [get]
+// @Router /sessions/{sessionId}/user/contacts [get]
 func (h *UserHandler) GetContacts(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -177,8 +181,9 @@ func (h *UserHandler) GetContacts(w http.ResponseWriter, r *http.Request) {
 // @Param request body object{presence=string} true "Presence (available/unavailable)"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /user/presence [post]
+// @Router /sessions/{sessionId}/user/presence [post]
 func (h *UserHandler) SendPresence(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -217,8 +222,9 @@ func (h *UserHandler) SendPresence(w http.ResponseWriter, r *http.Request) {
 // @Param request body object{phone=string,state=string,media=string} true "Chat presence data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/presence [post]
+// @Router /sessions/{sessionId}/chat/presence [post]
 func (h *UserHandler) ChatPresence(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())

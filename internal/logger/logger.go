@@ -1,6 +1,8 @@
 package logger
 
 import (
+	"bytes"
+	"encoding/json"
 	"io"
 	"os"
 	"time"
@@ -8,11 +10,22 @@ import (
 	"github.com/rs/zerolog"
 )
 
-var log zerolog.Logger
+// ANSI color codes
+const (
+	colorGray  = "\x1b[90m"
+	colorReset = "\x1b[0m"
+)
 
+var (
+	log        zerolog.Logger
+	prettyMode bool
+)
+
+// Init initializes the global logger with the specified level and format
 func Init(level string, pretty bool) {
-	var output io.Writer = os.Stdout
+	prettyMode = pretty
 
+	var output io.Writer = os.Stdout
 	if pretty {
 		output = zerolog.ConsoleWriter{
 			Out:        os.Stdout,
@@ -29,74 +42,64 @@ func Init(level string, pretty bool) {
 		Level(lvl).
 		With().
 		Timestamp().
-		Caller().
 		Logger()
 }
 
-func Debug(msg string) {
-	log.Debug().Msg(msg)
-}
-
-func Debugf(format string, v ...interface{}) {
-	log.Debug().Msgf(format, v...)
-}
-
-func Info(msg string) {
-	log.Info().Msg(msg)
-}
-
-func Infof(format string, v ...interface{}) {
-	log.Info().Msgf(format, v...)
-}
-
-func Warn(msg string) {
-	log.Warn().Msg(msg)
-}
-
-func Warnf(format string, v ...interface{}) {
-	log.Warn().Msgf(format, v...)
-}
-
-func Error(msg string) {
-	log.Error().Msg(msg)
-}
-
-func Errorf(format string, v ...interface{}) {
-	log.Error().Msgf(format, v...)
-}
-
-func Fatal(msg string) {
-	log.Fatal().Msg(msg)
-}
-
-func Fatalf(format string, v ...interface{}) {
-	log.Fatal().Msgf(format, v...)
-}
-
-func WithField(key string, value interface{}) *zerolog.Event {
-	return log.Info().Interface(key, value)
-}
-
-func WithFields(fields map[string]interface{}) *zerolog.Event {
-	event := log.Info()
-	for k, v := range fields {
-		event = event.Interface(k, v)
-	}
-	return event
-}
-
-func WithError(err error) *zerolog.Event {
-	return log.Error().Err(err)
-}
-
+// Get returns the global logger instance
 func Get() *zerolog.Logger {
 	return &log
 }
 
+// Sub creates a sublogger with a module field
 func Sub(module string) zerolog.Logger {
 	return log.With().Str("module", module).Logger()
 }
 
+// Writer returns the logger as an io.Writer
 func Writer() io.Writer {
-	return os.Stdout
+	return log
 }
+
+// PrettyJSON formats data as JSON with optional pretty printing and color
+func PrettyJSON(v interface{}) string {
+	if !prettyMode {
+		b, _ := json.Marshal(v)
+		return string(b)
+	}
+	var buf bytes.Buffer
+	enc := json.NewEncoder(&buf)
+	enc.SetIndent("", "  ")
+	enc.Encode(v)
+	return colorGray + buf.String() + colorReset
+}
+
+// Component returns an info event with component field
+func Component(name string) *zerolog.Event {
+	return log.Info().Str("component", name)
+}
+
+// WarnComponent returns a warn event with component field
+func WarnComponent(name string) *zerolog.Event {
+	return log.Warn().Str("component", name)
+}
+
+// ErrorComponent returns an error event with component field
+func ErrorComponent(name string) *zerolog.Event {
+	return log.Error().Str("component", name)
+}
+
+// WithError returns an error event with the error attached
+func WithError(err error) *zerolog.Event {
+	return log.Error().Err(err)
+}
+
+// Legacy simple logging
+func Info(msg string)  { log.Info().Msg(msg) }
+func Warn(msg string)  { log.Warn().Msg(msg) }
+func Error(msg string) { log.Error().Msg(msg) }
+
+// Legacy formatted logging
+func Infof(format string, v ...interface{})  { log.Info().Msgf(format, v...) }
+func Warnf(format string, v ...interface{})  { log.Warn().Msgf(format, v...) }
+func Errorf(format string, v ...interface{}) { log.Error().Msgf(format, v...) }
+func Debugf(format string, v ...interface{}) { log.Debug().Msgf(format, v...) }

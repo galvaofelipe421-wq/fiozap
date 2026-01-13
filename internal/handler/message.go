@@ -27,8 +27,9 @@ func NewMessageHandler(messageService *service.MessageService) *MessageHandler {
 // @Param message body model.TextMessage true "Message data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/send/text [post]
+// @Router /sessions/{sessionId}/messages/text [post]
 func (h *MessageHandler) SendText(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -71,8 +72,9 @@ func (h *MessageHandler) SendText(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.ImageMessage true "Image data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/send/image [post]
+// @Router /sessions/{sessionId}/messages/image [post]
 func (h *MessageHandler) SendImage(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -115,8 +117,9 @@ func (h *MessageHandler) SendImage(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.AudioMessage true "Audio data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/send/audio [post]
+// @Router /sessions/{sessionId}/messages/audio [post]
 func (h *MessageHandler) SendAudio(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -159,8 +162,9 @@ func (h *MessageHandler) SendAudio(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.VideoMessage true "Video data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/send/video [post]
+// @Router /sessions/{sessionId}/messages/video [post]
 func (h *MessageHandler) SendVideo(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -203,8 +207,9 @@ func (h *MessageHandler) SendVideo(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.DocumentMessage true "Document data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/send/document [post]
+// @Router /sessions/{sessionId}/messages/document [post]
 func (h *MessageHandler) SendDocument(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -252,8 +257,9 @@ func (h *MessageHandler) SendDocument(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.LocationMessage true "Location data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/send/location [post]
+// @Router /sessions/{sessionId}/messages/location [post]
 func (h *MessageHandler) SendLocation(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -291,8 +297,9 @@ func (h *MessageHandler) SendLocation(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.ContactMessage true "Contact data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/send/contact [post]
+// @Router /sessions/{sessionId}/messages/contact [post]
 func (h *MessageHandler) SendContact(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -330,8 +337,9 @@ func (h *MessageHandler) SendContact(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.ReactionMessage true "Reaction data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/react [post]
+// @Router /sessions/{sessionId}/messages/reaction [post]
 func (h *MessageHandler) React(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -374,8 +382,9 @@ func (h *MessageHandler) React(w http.ResponseWriter, r *http.Request) {
 // @Param message body model.DeleteMessage true "Delete data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /chat/delete [post]
+// @Router /sessions/{sessionId}/messages/delete [post]
 func (h *MessageHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())

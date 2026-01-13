@@ -27,8 +27,9 @@ func NewGroupHandler(groupService *service.GroupService) *GroupHandler {
 // @Param request body object{name=string,participants=[]string} true "Group data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/create [post]
+// @Router /sessions/{sessionId}/group/create [post]
 func (h *GroupHandler) Create(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -67,8 +68,9 @@ func (h *GroupHandler) Create(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/list [get]
+// @Router /sessions/{sessionId}/group/list [get]
 func (h *GroupHandler) List(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -94,8 +96,9 @@ func (h *GroupHandler) List(w http.ResponseWriter, r *http.Request) {
 // @Param jid query string true "Group JID"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/info [get]
+// @Router /sessions/{sessionId}/group/info [get]
 func (h *GroupHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -127,8 +130,9 @@ func (h *GroupHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 // @Param jid query string true "Group JID"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/invitelink [get]
+// @Router /sessions/{sessionId}/group/invitelink [get]
 func (h *GroupHandler) GetInviteLink(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -161,8 +165,9 @@ func (h *GroupHandler) GetInviteLink(w http.ResponseWriter, r *http.Request) {
 // @Param request body object{jid=string} true "Group JID"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/leave [post]
+// @Router /sessions/{sessionId}/group/leave [post]
 func (h *GroupHandler) Leave(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -202,8 +207,9 @@ func (h *GroupHandler) Leave(w http.ResponseWriter, r *http.Request) {
 // @Param request body object{jid=string,participants=[]string,action=string} true "Participants data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/updateparticipants [post]
+// @Router /sessions/{sessionId}/group/updateparticipants [post]
 func (h *GroupHandler) UpdateParticipants(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -254,8 +260,9 @@ func (h *GroupHandler) UpdateParticipants(w http.ResponseWriter, r *http.Request
 // @Param request body object{jid=string,name=string} true "Group name data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/name [post]
+// @Router /sessions/{sessionId}/group/name [post]
 func (h *GroupHandler) SetName(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())
@@ -296,8 +303,9 @@ func (h *GroupHandler) SetName(w http.ResponseWriter, r *http.Request) {
 // @Param request body object{jid=string,topic=string} true "Group topic data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
+// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
-// @Router /group/topic [post]
+// @Router /sessions/{sessionId}/group/topic [post]
 func (h *GroupHandler) SetTopic(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(r.Context())
 	session := middleware.GetSessionFromContext(r.Context())

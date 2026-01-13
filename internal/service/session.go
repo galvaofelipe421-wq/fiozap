@@ -338,20 +338,23 @@ func (s *SessionService) PairPhone(ctx context.Context, userID string, session *
 func (s *SessionService) ReconnectAll(ctx context.Context) {
 	sessions, err := s.sessionRepo.GetConnectedSessions()
 	if err != nil {
-		logger.Errorf("Failed to get connected sessions: %v", err)
+		logger.WithError(err).Str("component", "session").Msg("failed to get connected sessions")
 		return
 	}
 
-	logger.Infof("Reconnecting %d sessions...", len(sessions))
+	logger.Component("session").Int("count", len(sessions)).Msg("reconnecting")
 
 	for _, session := range sessions {
 		go func(sess model.Session) {
 			_, err := s.Connect(ctx, sess.UserID, &sess, true)
 			if err != nil {
-				logger.Warnf("Failed to reconnect session %s: %v", sess.ID, err)
+				logger.WarnComponent("session").
+					Str("session_id", sess.ID).
+					Err(err).
+					Msg("reconnect failed")
 				s.sessionRepo.UpdateConnected(sess.ID, 0)
 			} else {
-				logger.Infof("Session %s reconnected", sess.ID)
+				logger.Component("session").Str("session_id", sess.ID).Msg("reconnected")
 			}
 		}(session)
 	}
