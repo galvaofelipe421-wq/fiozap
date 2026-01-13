@@ -271,8 +271,8 @@ func (c *Client) handleJoinedGroup(v *events.JoinedGroup) {
 		c.eventCallback("JoinedGroup", map[string]interface{}{
 			"jid":   v.JID.String(),
 			"type":  v.Type,
-			"name":  v.GroupInfo.Name,
-			"topic": v.GroupInfo.Topic,
+			"name":  v.Name,
+			"topic": v.Topic,
 		})
 	}
 }

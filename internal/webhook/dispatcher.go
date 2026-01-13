@@ -66,29 +66,29 @@ func (d *Dispatcher) processPending() {
 	for _, event := range events {
 		if event.SessionID == "" {
 			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Msg("no session_id, skipping")
-			d.webhookRepo.MarkFailed(event.ID)
+			_ = d.webhookRepo.MarkFailed(event.ID)
 			continue
 		}
 
 		session, err := d.sessionRepo.GetByID(event.SessionID)
 		if err != nil {
 			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Err(err).Msg("session not found")
-			d.webhookRepo.MarkFailed(event.ID)
+			_ = d.webhookRepo.MarkFailed(event.ID)
 			continue
 		}
 
 		if session.Webhook == "" {
-			d.webhookRepo.MarkFailed(event.ID)
+			_ = d.webhookRepo.MarkFailed(event.ID)
 			continue
 		}
 
 		if !d.shouldSendEvent(session.Events, event.EventType) {
-			d.webhookRepo.MarkSent(event.ID)
+			_ = d.webhookRepo.MarkSent(event.ID)
 			continue
 		}
 
 		var data interface{}
-		json.Unmarshal(event.Payload, &data)
+		_ = json.Unmarshal(event.Payload, &data)
 
 		payload := &WebhookPayload{
 			Event:     event.EventType,
@@ -102,10 +102,10 @@ func (d *Dispatcher) processPending() {
 
 		if err != nil {
 			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Err(err).Msg("send failed")
-			d.webhookRepo.MarkFailed(event.ID)
+			_ = d.webhookRepo.MarkFailed(event.ID)
 		} else {
 			logger.Get().Debug().Str("component", "webhook").Int64("id", event.ID).Msg("sent")
-			d.webhookRepo.MarkSent(event.ID)
+			_ = d.webhookRepo.MarkSent(event.ID)
 		}
 	}
 }

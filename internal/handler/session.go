@@ -5,8 +5,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-
 	"fiozap/internal/middleware"
 	"fiozap/internal/model"
 	"fiozap/internal/service"
@@ -369,9 +367,4 @@ func (h *SessionHandler) AdminListAllSessions(w http.ResponseWriter, r *http.Req
 	}
 
 	model.RespondOK(w, sessions)
-}
-
-// helper to get sessionId from URL
-func getSessionID(r *http.Request) string {
-	return chi.URLParam(r, "sessionId")
 }

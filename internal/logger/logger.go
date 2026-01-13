@@ -74,7 +74,7 @@ func PrettyJSON(v interface{}) string {
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	enc.SetIndent("", "  ")
-	enc.Encode(v)
+	_ = enc.Encode(v)
 	return colorGray + buf.String() + colorReset
 }
 

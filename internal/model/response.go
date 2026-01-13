@@ -22,7 +22,7 @@ func RespondJSON(w http.ResponseWriter, code int, data interface{}) {
 		Data:    data,
 	}
 
-	json.NewEncoder(w).Encode(resp)
+	_ = json.NewEncoder(w).Encode(resp)
 }
 
 func RespondError(w http.ResponseWriter, code int, err error) {
@@ -35,7 +35,7 @@ func RespondError(w http.ResponseWriter, code int, err error) {
 		Error:   err.Error(),
 	}
 
-	json.NewEncoder(w).Encode(resp)
+	_ = json.NewEncoder(w).Encode(resp)
 }
 
 func RespondOK(w http.ResponseWriter, data interface{}) {

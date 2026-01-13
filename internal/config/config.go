@@ -2,7 +2,6 @@ package config
 
 import (
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -46,24 +45,6 @@ func Load() (*Config, error) {
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
-	}
-	return defaultValue
-}
-
-func getEnvInt(key string, defaultValue int) int {
-	if value := os.Getenv(key); value != "" {
-		if i, err := strconv.Atoi(value); err == nil {
-			return i
-		}
-	}
-	return defaultValue
-}
-
-func getEnvBool(key string, defaultValue bool) bool {
-	if value := os.Getenv(key); value != "" {
-		if b, err := strconv.ParseBool(value); err == nil {
-			return b
-		}
 	}
 	return defaultValue
 }

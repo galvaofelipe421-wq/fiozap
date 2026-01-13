@@ -436,7 +436,8 @@ func (s *MessageService) Delete(ctx context.Context, userID, sessionID string, r
 		return nil, err
 	}
 
-	resp, err := client.RevokeMessage(ctx, recipient, types.MessageID(req.MessageID))
+	revokeMsg := client.BuildRevoke(recipient, types.EmptyJID, req.MessageID)
+	resp, err := client.SendMessage(ctx, recipient, revokeMsg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to delete message: %w", err)
 	}

@@ -352,7 +352,7 @@ func (s *SessionService) ReconnectAll(ctx context.Context) {
 					Str("session_id", sess.ID).
 					Err(err).
 					Msg("reconnect failed")
-				s.sessionRepo.UpdateConnected(sess.ID, 0)
+				_ = s.sessionRepo.UpdateConnected(sess.ID, 0)
 			} else {
 				logger.Component("session").Str("session_id", sess.ID).Msg("reconnected")
 			}
