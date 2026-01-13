@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 
 	"fiozap/internal/database/repository"
 	"fiozap/internal/model"
@@ -31,8 +31,7 @@ func NewAdminHandler(userRepo *repository.UserRepository) *AdminHandler {
 // @Router /admin/users [get]
 // @Router /admin/users/{id} [get]
 func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
+	id := chi.URLParam(r, "id")
 
 	if id != "" {
 		user, err := h.userRepo.GetByID(id)
@@ -103,8 +102,7 @@ func (h *AdminHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 // @Security AdminKeyAuth
 // @Router /admin/users/{id} [put]
 func (h *AdminHandler) EditUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
+	id := chi.URLParam(r, "id")
 
 	var req model.UserUpdateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -132,8 +130,7 @@ func (h *AdminHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 // @Security AdminKeyAuth
 // @Router /admin/users/{id} [delete]
 func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
+	id := chi.URLParam(r, "id")
 
 	if err := h.userRepo.Delete(id); err != nil {
 		model.RespondInternalError(w, err)

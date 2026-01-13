@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 
 	"fiozap/internal/database/repository"
 	"fiozap/internal/model"
@@ -29,8 +29,7 @@ func (m *SessionMiddleware) ValidateSession(next http.Handler) http.Handler {
 			return
 		}
 
-		vars := mux.Vars(r)
-		sessionName := vars["sessionId"]
+		sessionName := chi.URLParam(r, "sessionId")
 		if sessionName == "" {
 			model.RespondBadRequest(w, errors.New("session name is required"))
 			return

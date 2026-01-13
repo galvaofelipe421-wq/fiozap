@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 
 	"fiozap/internal/middleware"
 	"fiozap/internal/model"
@@ -373,6 +373,5 @@ func (h *SessionHandler) AdminListAllSessions(w http.ResponseWriter, r *http.Req
 
 // helper to get sessionId from URL
 func getSessionID(r *http.Request) string {
-	vars := mux.Vars(r)
-	return vars["sessionId"]
+	return chi.URLParam(r, "sessionId")
 }
