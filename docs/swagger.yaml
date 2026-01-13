@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  model.ArchiveChatMessage:
+    properties:
+      archive:
+        type: boolean
+      phone:
+        type: string
+    type: object
   model.AudioMessage:
     properties:
       audio:
@@ -12,6 +19,26 @@ definitions:
         type: string
       ptt:
         type: boolean
+    type: object
+  model.ButtonItem:
+    properties:
+      button_id:
+        type: string
+      button_text:
+        type: string
+    type: object
+  model.ButtonsMessage:
+    properties:
+      buttons:
+        items:
+          $ref: '#/definitions/model.ButtonItem'
+        type: array
+      id:
+        type: string
+      phone:
+        type: string
+      title:
+        type: string
     type: object
   model.ContactMessage:
     properties:
@@ -46,6 +73,77 @@ definitions:
       phone:
         type: string
     type: object
+  model.DownloadMediaMessage:
+    properties:
+      direct_path:
+        type: string
+      file_enc_sha256:
+        items:
+          type: integer
+        type: array
+      file_length:
+        type: integer
+      file_sha256:
+        items:
+          type: integer
+        type: array
+      media_key:
+        items:
+          type: integer
+        type: array
+      mimetype:
+        type: string
+      url:
+        type: string
+    type: object
+  model.EditMessage:
+    properties:
+      body:
+        type: string
+      message_id:
+        type: string
+      phone:
+        type: string
+    type: object
+  model.GroupAnnounceRequest:
+    properties:
+      announce:
+        type: boolean
+      jid:
+        type: string
+    type: object
+  model.GroupEphemeralRequest:
+    properties:
+      duration:
+        description: '"24h", "7d", "90d", "off"'
+        type: string
+      jid:
+        type: string
+    type: object
+  model.GroupInviteInfoRequest:
+    properties:
+      code:
+        type: string
+    type: object
+  model.GroupJoinRequest:
+    properties:
+      code:
+        type: string
+    type: object
+  model.GroupLockedRequest:
+    properties:
+      jid:
+        type: string
+      locked:
+        type: boolean
+    type: object
+  model.GroupPhotoRequest:
+    properties:
+      image:
+        type: string
+      jid:
+        type: string
+    type: object
   model.ImageMessage:
     properties:
       caption:
@@ -57,6 +155,43 @@ definitions:
       mimetype:
         type: string
       phone:
+        type: string
+    type: object
+  model.ListItem:
+    properties:
+      desc:
+        type: string
+      row_id:
+        type: string
+      title:
+        type: string
+    type: object
+  model.ListMessage:
+    properties:
+      button_text:
+        type: string
+      desc:
+        type: string
+      footer_text:
+        type: string
+      id:
+        type: string
+      phone:
+        type: string
+      sections:
+        items:
+          $ref: '#/definitions/model.ListSection'
+        type: array
+      title:
+        type: string
+    type: object
+  model.ListSection:
+    properties:
+      rows:
+        items:
+          $ref: '#/definitions/model.ListItem'
+        type: array
+      title:
         type: string
     type: object
   model.LocationMessage:
@@ -74,8 +209,32 @@ definitions:
       phone:
         type: string
     type: object
+  model.MarkReadMessage:
+    properties:
+      chat_phone:
+        type: string
+      ids:
+        items:
+          type: string
+        type: array
+      sender_phone:
+        type: string
+    type: object
   model.PairPhoneRequest:
     properties:
+      phone:
+        type: string
+    type: object
+  model.PollMessage:
+    properties:
+      header:
+        type: string
+      id:
+        type: string
+      options:
+        items:
+          type: string
+        type: array
       phone:
         type: string
     type: object
@@ -86,6 +245,13 @@ definitions:
       message_id:
         type: string
       phone:
+        type: string
+    type: object
+  model.RejectCallRequest:
+    properties:
+      call_from:
+        type: string
+      call_id:
         type: string
     type: object
   model.Response:
@@ -133,6 +299,36 @@ definitions:
       proxyUrl:
         type: string
       webhook:
+        type: string
+    type: object
+  model.StatusTextMessage:
+    properties:
+      body:
+        type: string
+    type: object
+  model.StickerMessage:
+    properties:
+      emojis:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      mimetype:
+        type: string
+      pack_id:
+        type: string
+      pack_name:
+        type: string
+      pack_publisher:
+        type: string
+      phone:
+        type: string
+      png_thumbnail:
+        items:
+          type: integer
+        type: array
+      sticker:
         type: string
     type: object
   model.TextMessage:
@@ -501,6 +697,270 @@ paths:
       summary: Update session
       tags:
       - Sessions
+  /sessions/{sessionId}/call/reject:
+    post:
+      consumes:
+      - application/json
+      description: Reject an incoming WhatsApp call
+      parameters:
+      - description: Call rejection data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RejectCallRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Reject incoming call
+      tags:
+      - User
+  /sessions/{sessionId}/chat/archive:
+    post:
+      consumes:
+      - application/json
+      description: Archive or unarchive a chat
+      parameters:
+      - description: Archive data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.ArchiveChatMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Archive chat
+      tags:
+      - Chat
+  /sessions/{sessionId}/chat/downloadaudio:
+    post:
+      consumes:
+      - application/json
+      description: Download an audio and return base64 data
+      parameters:
+      - description: Download data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.DownloadMediaMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Download audio
+      tags:
+      - Chat
+  /sessions/{sessionId}/chat/downloaddocument:
+    post:
+      consumes:
+      - application/json
+      description: Download a document and return base64 data
+      parameters:
+      - description: Download data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.DownloadMediaMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Download document
+      tags:
+      - Chat
+  /sessions/{sessionId}/chat/downloadimage:
+    post:
+      consumes:
+      - application/json
+      description: Download an image and return base64 data
+      parameters:
+      - description: Download data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.DownloadMediaMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Download image
+      tags:
+      - Chat
+  /sessions/{sessionId}/chat/downloadsticker:
+    post:
+      consumes:
+      - application/json
+      description: Download a sticker and return base64 data
+      parameters:
+      - description: Download data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.DownloadMediaMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Download sticker
+      tags:
+      - Chat
+  /sessions/{sessionId}/chat/downloadvideo:
+    post:
+      consumes:
+      - application/json
+      description: Download a video and return base64 data
+      parameters:
+      - description: Download data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.DownloadMediaMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Download video
+      tags:
+      - Chat
+  /sessions/{sessionId}/chat/markread:
+    post:
+      consumes:
+      - application/json
+      description: Mark messages as read
+      parameters:
+      - description: Mark read data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.MarkReadMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Mark messages as read
+      tags:
+      - Chat
   /sessions/{sessionId}/chat/presence:
     post:
       consumes:
@@ -611,6 +1071,39 @@ paths:
       summary: Disconnect WhatsApp session
       tags:
       - Sessions
+  /sessions/{sessionId}/group/announce:
+    post:
+      consumes:
+      - application/json
+      description: Set the announce mode of a group (only admins can send messages)
+      parameters:
+      - description: Group announce data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.GroupAnnounceRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Set group announce mode
+      tags:
+      - Group
   /sessions/{sessionId}/group/create:
     post:
       consumes:
@@ -651,6 +1144,39 @@ paths:
       summary: Create group
       tags:
       - Group
+  /sessions/{sessionId}/group/ephemeral:
+    post:
+      consumes:
+      - application/json
+      description: Set the disappearing messages timer for a group
+      parameters:
+      - description: Group ephemeral data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.GroupEphemeralRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Set group ephemeral timer
+      tags:
+      - Group
   /sessions/{sessionId}/group/info:
     get:
       description: Get detailed information about a group
@@ -681,6 +1207,39 @@ paths:
       summary: Get group info
       tags:
       - Group
+  /sessions/{sessionId}/group/inviteinfo:
+    post:
+      consumes:
+      - application/json
+      description: Get information about a group from an invite link
+      parameters:
+      - description: Group invite info request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.GroupInviteInfoRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get group invite info
+      tags:
+      - Group
   /sessions/{sessionId}/group/invitelink:
     get:
       description: Get the invite link for a group
@@ -709,6 +1268,39 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get group invite link
+      tags:
+      - Group
+  /sessions/{sessionId}/group/join:
+    post:
+      consumes:
+      - application/json
+      description: Join a group using an invite link/code
+      parameters:
+      - description: Group join data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.GroupJoinRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Join group via invite link
       tags:
       - Group
   /sessions/{sessionId}/group/leave:
@@ -772,6 +1364,39 @@ paths:
       summary: List groups
       tags:
       - Group
+  /sessions/{sessionId}/group/locked:
+    post:
+      consumes:
+      - application/json
+      description: Set the locked mode of a group (only admins can edit group info)
+      parameters:
+      - description: Group locked data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.GroupLockedRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Set group locked mode
+      tags:
+      - Group
   /sessions/{sessionId}/group/name:
     post:
       consumes:
@@ -808,6 +1433,75 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Set group name
+      tags:
+      - Group
+  /sessions/{sessionId}/group/photo:
+    post:
+      consumes:
+      - application/json
+      description: Set the photo of a group
+      parameters:
+      - description: Group photo data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.GroupPhotoRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Set group photo
+      tags:
+      - Group
+  /sessions/{sessionId}/group/photo/remove:
+    post:
+      consumes:
+      - application/json
+      description: Remove the photo of a group
+      parameters:
+      - description: Group JID
+        in: body
+        name: request
+        required: true
+        schema:
+          properties:
+            jid:
+              type: string
+          type: object
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Remove group photo
       tags:
       - Group
   /sessions/{sessionId}/group/topic:
@@ -948,6 +1642,39 @@ paths:
       summary: Send audio
       tags:
       - Messages
+  /sessions/{sessionId}/messages/buttons:
+    post:
+      consumes:
+      - application/json
+      description: Send a buttons message to a phone number (experimental)
+      parameters:
+      - description: Buttons data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.ButtonsMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Send buttons message
+      tags:
+      - Messages
   /sessions/{sessionId}/messages/contact:
     post:
       consumes:
@@ -1047,6 +1774,39 @@ paths:
       summary: Send document
       tags:
       - Messages
+  /sessions/{sessionId}/messages/edit:
+    post:
+      consumes:
+      - application/json
+      description: Edit a sent message
+      parameters:
+      - description: Edit data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.EditMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Edit message
+      tags:
+      - Messages
   /sessions/{sessionId}/messages/image:
     post:
       consumes:
@@ -1078,6 +1838,39 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Send image
+      tags:
+      - Messages
+  /sessions/{sessionId}/messages/list:
+    post:
+      consumes:
+      - application/json
+      description: Send a list message to a phone number
+      parameters:
+      - description: List data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.ListMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Send list message
       tags:
       - Messages
   /sessions/{sessionId}/messages/location:
@@ -1113,6 +1906,39 @@ paths:
       summary: Send location
       tags:
       - Messages
+  /sessions/{sessionId}/messages/poll:
+    post:
+      consumes:
+      - application/json
+      description: Send a poll to a phone number or group
+      parameters:
+      - description: Poll data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.PollMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Send poll
+      tags:
+      - Messages
   /sessions/{sessionId}/messages/reaction:
     post:
       consumes:
@@ -1144,6 +1970,39 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: React to message
+      tags:
+      - Messages
+  /sessions/{sessionId}/messages/sticker:
+    post:
+      consumes:
+      - application/json
+      description: Send a sticker to a phone number
+      parameters:
+      - description: Sticker data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.StickerMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Send sticker
       tags:
       - Messages
   /sessions/{sessionId}/messages/text:
@@ -1295,6 +2154,39 @@ paths:
       summary: Get session status
       tags:
       - Sessions
+  /sessions/{sessionId}/status/text:
+    post:
+      consumes:
+      - application/json
+      description: Set WhatsApp status/story text
+      parameters:
+      - description: Status text data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/model.StatusTextMessage'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Set status text
+      tags:
+      - Status
   /sessions/{sessionId}/user/avatar:
     post:
       consumes:
@@ -1396,6 +2288,36 @@ paths:
       summary: Get contacts
       tags:
       - User
+  /sessions/{sessionId}/user/getlid:
+    get:
+      description: Get the Local ID (LID) for a phone number
+      parameters:
+      - description: Phone number
+        in: query
+        name: phone
+        required: true
+        type: string
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user LID
+      tags:
+      - User
   /sessions/{sessionId}/user/info:
     post:
       consumes:
@@ -1432,6 +2354,31 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get user info
+      tags:
+      - User
+  /sessions/{sessionId}/user/newsletters:
+    get:
+      description: Get list of subscribed WhatsApp channels/newsletters
+      parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get subscribed newsletters
       tags:
       - User
   /sessions/{sessionId}/user/presence:
