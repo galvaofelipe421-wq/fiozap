@@ -220,6 +220,59 @@ definitions:
       sender_phone:
         type: string
     type: object
+  model.NewsletterCreateRequest:
+    properties:
+      description:
+        example: Newsletter description
+        type: string
+      name:
+        example: My Newsletter
+        type: string
+      picture:
+        description: base64 encoded image
+        type: string
+    type: object
+  model.NewsletterFollowRequest:
+    properties:
+      jid:
+        example: 123456789@newsletter
+        type: string
+    type: object
+  model.NewsletterMarkViewedRequest:
+    properties:
+      jid:
+        example: 123456789@newsletter
+        type: string
+      server_ids:
+        example:
+        - 1
+        - 2
+        - 3
+        items:
+          type: integer
+        type: array
+    type: object
+  model.NewsletterMuteRequest:
+    properties:
+      jid:
+        example: 123456789@newsletter
+        type: string
+      mute:
+        example: true
+        type: boolean
+    type: object
+  model.NewsletterReactionRequest:
+    properties:
+      jid:
+        example: 123456789@newsletter
+        type: string
+      reaction:
+        example: "\U0001F44D"
+        type: string
+      server_id:
+        example: 123
+        type: integer
+    type: object
   model.PairPhoneRequest:
     properties:
       phone:
@@ -2071,6 +2124,361 @@ paths:
       summary: Send video
       tags:
       - Messages
+  /sessions/{sessionId}/newsletter/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new newsletter/channel
+      parameters:
+      - description: Newsletter details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewsletterCreateRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Create newsletter
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/follow:
+    post:
+      consumes:
+      - application/json
+      description: Subscribe to a newsletter/channel
+      parameters:
+      - description: Newsletter JID
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewsletterFollowRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Follow newsletter
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/info:
+    get:
+      description: Get detailed information about a newsletter by JID
+      parameters:
+      - description: Newsletter JID
+        in: query
+        name: jid
+        required: true
+        type: string
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get newsletter info
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/info/invite:
+    get:
+      description: Get newsletter information using an invite link/code
+      parameters:
+      - description: Invite key/code
+        in: query
+        name: key
+        required: true
+        type: string
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get newsletter info via invite
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/list:
+    get:
+      description: Get list of subscribed WhatsApp channels/newsletters
+      parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: List subscribed newsletters
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/liveupdates:
+    post:
+      consumes:
+      - application/json
+      description: Subscribe to receive live updates from a newsletter
+      parameters:
+      - description: Newsletter JID
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewsletterFollowRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Subscribe to live updates
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/markviewed:
+    post:
+      consumes:
+      - application/json
+      description: Mark newsletter messages as viewed
+      parameters:
+      - description: Mark viewed request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewsletterMarkViewedRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Mark messages as viewed
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/messages:
+    get:
+      description: Get messages from a newsletter
+      parameters:
+      - description: Newsletter JID
+        in: query
+        name: jid
+        required: true
+        type: string
+      - default: 50
+        description: Number of messages to fetch
+        in: query
+        name: count
+        type: integer
+      - description: Fetch messages before this server ID
+        in: query
+        name: before
+        type: integer
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get newsletter messages
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/mute:
+    post:
+      consumes:
+      - application/json
+      description: Toggle mute status for a newsletter
+      parameters:
+      - description: Mute request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewsletterMuteRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Mute/unmute newsletter
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/reaction:
+    post:
+      consumes:
+      - application/json
+      description: Send a reaction to a newsletter message
+      parameters:
+      - description: Reaction request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewsletterReactionRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Send reaction to message
+      tags:
+      - Newsletter
+  /sessions/{sessionId}/newsletter/unfollow:
+    post:
+      consumes:
+      - application/json
+      description: Unsubscribe from a newsletter/channel
+      parameters:
+      - description: Newsletter JID
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewsletterFollowRequest'
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Unfollow newsletter
+      tags:
+      - Newsletter
   /sessions/{sessionId}/pairphone:
     post:
       consumes:

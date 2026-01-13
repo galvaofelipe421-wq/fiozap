@@ -52,6 +52,7 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 	messageService := service.NewMessageService(sessionService)
 	userService := service.NewUserService(sessionService)
 	groupService := service.NewGroupService(sessionService)
+	newsletterService := service.NewNewsletterService(sessionService)
 
 	// Handlers
 	healthHandler := handler.NewHealthHandler()
@@ -60,6 +61,7 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 	messageHandler := handler.NewMessageHandler(messageService)
 	userHandler := handler.NewUserHandler(userService)
 	groupHandler := handler.NewGroupHandler(groupService)
+	newsletterHandler := handler.NewNewsletterHandler(newsletterService)
 	webhookHandler := handler.NewWebhookHandler(sessionRepo)
 
 	// Public routes
@@ -164,6 +166,20 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 				r.Post("/", webhookHandler.Set)
 				r.Put("/", webhookHandler.Update)
 				r.Delete("/", webhookHandler.Delete)
+			})
+
+			r.Route("/newsletter", func(r chi.Router) {
+				r.Get("/list", newsletterHandler.List)
+				r.Get("/info", newsletterHandler.GetInfo)
+				r.Get("/info/invite", newsletterHandler.GetInfoWithInvite)
+				r.Get("/messages", newsletterHandler.GetMessages)
+				r.Post("/follow", newsletterHandler.Follow)
+				r.Post("/unfollow", newsletterHandler.Unfollow)
+				r.Post("/mute", newsletterHandler.Mute)
+				r.Post("/markviewed", newsletterHandler.MarkViewed)
+				r.Post("/reaction", newsletterHandler.SendReaction)
+				r.Post("/liveupdates", newsletterHandler.SubscribeLiveUpdates)
+				r.Post("/create", newsletterHandler.Create)
 			})
 		})
 	})
