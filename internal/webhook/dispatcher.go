@@ -11,6 +11,14 @@ import (
 	"fiozap/internal/logger"
 )
 
+const (
+	pollInterval   = 2 * time.Second
+	sendTimeout    = 10 * time.Second
+	batchSize      = 50
+	eventAll       = "All"
+	componentName  = "webhook"
+)
+
 type Dispatcher struct {
 	webhookRepo *repository.WebhookRepository
 	sessionRepo *repository.SessionRepository
@@ -31,19 +39,19 @@ func NewDispatcher(webhookRepo *repository.WebhookRepository, sessionRepo *repos
 func (d *Dispatcher) Start() {
 	d.wg.Add(1)
 	go d.processLoop()
-	logger.Component("webhook").Str("status", "running").Msg("dispatcher started")
+	logger.Component(componentName).Str("status", "running").Msg("dispatcher started")
 }
 
 func (d *Dispatcher) Stop() {
 	close(d.stopCh)
 	d.wg.Wait()
-	logger.Component("webhook").Str("status", "stopped").Msg("dispatcher stopped")
+	logger.Component(componentName).Str("status", "stopped").Msg("dispatcher stopped")
 }
 
 func (d *Dispatcher) processLoop() {
 	defer d.wg.Done()
 
-	ticker := time.NewTicker(2 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	for {
@@ -57,56 +65,63 @@ func (d *Dispatcher) processLoop() {
 }
 
 func (d *Dispatcher) processPending() {
-	events, err := d.webhookRepo.GetPending(50)
+	events, err := d.webhookRepo.GetPending(batchSize)
 	if err != nil {
-		logger.WithError(err).Str("component", "webhook").Msg("failed to get pending")
+		logger.WithError(err).Str("component", componentName).Msg("failed to get pending")
 		return
 	}
 
 	for _, event := range events {
-		if event.SessionID == "" {
-			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Msg("no session_id, skipping")
-			_ = d.webhookRepo.MarkFailed(event.ID)
-			continue
-		}
+		d.processEvent(event)
+	}
+}
 
-		session, err := d.sessionRepo.GetByID(event.SessionID)
-		if err != nil {
-			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Err(err).Msg("session not found")
-			_ = d.webhookRepo.MarkFailed(event.ID)
-			continue
-		}
+func (d *Dispatcher) processEvent(event repository.WebhookEvent) {
+	if event.SessionID == "" {
+		logger.WarnComponent(componentName).Int64("id", event.ID).Msg("no session_id, skipping")
+		_ = d.webhookRepo.MarkFailed(event.ID)
+		return
+	}
 
-		if session.Webhook == "" {
-			_ = d.webhookRepo.MarkFailed(event.ID)
-			continue
-		}
+	session, err := d.sessionRepo.GetByID(event.SessionID)
+	if err != nil {
+		logger.WarnComponent(componentName).Int64("id", event.ID).Err(err).Msg("session not found")
+		_ = d.webhookRepo.MarkFailed(event.ID)
+		return
+	}
 
-		if !d.shouldSendEvent(session.Events, event.EventType) {
-			_ = d.webhookRepo.MarkSent(event.ID)
-			continue
-		}
+	if session.Webhook == "" {
+		_ = d.webhookRepo.MarkFailed(event.ID)
+		return
+	}
 
-		var data interface{}
-		_ = json.Unmarshal(event.Payload, &data)
+	if !d.shouldSendEvent(session.Events, event.EventType) {
+		_ = d.webhookRepo.MarkSent(event.ID)
+		return
+	}
 
-		payload := &WebhookPayload{
-			Event:     event.EventType,
-			Timestamp: event.CreatedAt.Unix(),
-			Data:      data,
-		}
+	d.sendWebhook(event, session.Webhook)
+}
 
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		err = d.sender.Send(ctx, session.Webhook, payload)
-		cancel()
+func (d *Dispatcher) sendWebhook(event repository.WebhookEvent, url string) {
+	var data interface{}
+	_ = json.Unmarshal(event.Payload, &data)
 
-		if err != nil {
-			logger.Get().Warn().Str("component", "webhook").Int64("id", event.ID).Err(err).Msg("send failed")
-			_ = d.webhookRepo.MarkFailed(event.ID)
-		} else {
-			logger.Get().Debug().Str("component", "webhook").Int64("id", event.ID).Msg("sent")
-			_ = d.webhookRepo.MarkSent(event.ID)
-		}
+	payload := &WebhookPayload{
+		Event:     event.EventType,
+		Timestamp: event.CreatedAt.Unix(),
+		Data:      data,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), sendTimeout)
+	defer cancel()
+
+	if err := d.sender.Send(ctx, url, payload); err != nil {
+		logger.WarnComponent(componentName).Int64("id", event.ID).Err(err).Msg("send failed")
+		_ = d.webhookRepo.MarkFailed(event.ID)
+	} else {
+		logger.DebugComponent(componentName).Int64("id", event.ID).Msg("sent")
+		_ = d.webhookRepo.MarkSent(event.ID)
 	}
 }
 
@@ -115,9 +130,8 @@ func (d *Dispatcher) shouldSendEvent(subscribedEvents, eventType string) bool {
 		return false
 	}
 
-	events := strings.Split(subscribedEvents, ",")
-	for _, e := range events {
-		if e == "All" || e == eventType {
+	for _, e := range strings.Split(subscribedEvents, ",") {
+		if e == eventAll || e == eventType {
 			return true
 		}
 	}

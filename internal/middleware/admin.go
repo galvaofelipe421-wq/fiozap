@@ -8,6 +8,11 @@ import (
 	"fiozap/internal/model"
 )
 
+var (
+	errMissingAdmin = errors.New("missing admin token")
+	errInvalidAdmin = errors.New("invalid admin token")
+)
+
 type AdminMiddleware struct {
 	adminToken string
 }
@@ -18,16 +23,15 @@ func NewAdminMiddleware(adminToken string) *AdminMiddleware {
 
 func (m *AdminMiddleware) Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.Header.Get("Authorization")
-		token = strings.TrimPrefix(token, "Bearer ")
+		token := strings.TrimPrefix(r.Header.Get(headerAuth), bearerPrefix)
 
 		if token == "" {
-			model.RespondUnauthorized(w, errors.New("missing admin token"))
+			model.RespondUnauthorized(w, errMissingAdmin)
 			return
 		}
 
 		if token != m.adminToken {
-			model.RespondUnauthorized(w, errors.New("invalid admin token"))
+			model.RespondUnauthorized(w, errInvalidAdmin)
 			return
 		}
 

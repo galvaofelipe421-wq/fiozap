@@ -12,13 +12,13 @@ import (
 	"fiozap/internal/logger"
 )
 
-func Connect(cfg *config.Config) (*sqlx.DB, error) {
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBSSLMode,
-	)
+const (
+	driverPostgres = "postgres"
+	dbOwner        = "fiozap"
+)
 
-	db, err := sqlx.Open("postgres", dsn)
+func Connect(cfg *config.Config) (*sqlx.DB, error) {
+	db, err := sqlx.Open(driverPostgres, cfg.DSN())
 	if err != nil {
 		return nil, fmt.Errorf("failed to open postgres: %w", err)
 	}
@@ -27,32 +27,27 @@ func Connect(cfg *config.Config) (*sqlx.DB, error) {
 		return nil, fmt.Errorf("failed to ping postgres: %w", err)
 	}
 
-	logger.Component("database").
-		Str("host", cfg.DBHost).
-		Str("port", cfg.DBPort).
-		Str("name", cfg.DBName).
-		Msg("connected")
+	logConnection(cfg)
 	return db, nil
 }
 
 func ConnectDBUtil(cfg *config.Config) (*dbutil.Database, error) {
-	dsn := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName, cfg.DBSSLMode,
-	)
-
-	db, err := dbutil.NewWithDialect(dsn, "postgres")
+	db, err := dbutil.NewWithDialect(cfg.PostgresURL(), driverPostgres)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open postgres: %w", err)
 	}
 
-	db.Owner = "fiozap"
+	db.Owner = dbOwner
 	db.VersionTable = migration.VersionTable
 
+	logConnection(cfg)
+	return db, nil
+}
+
+func logConnection(cfg *config.Config) {
 	logger.Component("database").
 		Str("host", cfg.DBHost).
 		Str("port", cfg.DBPort).
 		Str("name", cfg.DBName).
 		Msg("connected")
-	return db, nil
 }

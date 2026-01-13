@@ -9,15 +9,19 @@ import (
 	"time"
 )
 
+const (
+	httpTimeout     = 10 * time.Second
+	contentTypeJSON = "application/json"
+	userAgent       = "FioZap-Webhook/1.0"
+)
+
 type Sender struct {
 	client *http.Client
 }
 
 func NewSender() *Sender {
 	return &Sender{
-		client: &http.Client{
-			Timeout: 10 * time.Second,
-		},
+		client: &http.Client{Timeout: httpTimeout},
 	}
 }
 
@@ -38,8 +42,8 @@ func (s *Sender) Send(ctx context.Context, url string, payload *WebhookPayload) 
 		return fmt.Errorf("failed to create request: %w", err)
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "FioZap-Webhook/1.0")
+	req.Header.Set("Content-Type", contentTypeJSON)
+	req.Header.Set("User-Agent", userAgent)
 
 	resp, err := s.client.Do(req)
 	if err != nil {
@@ -47,7 +51,7 @@ func (s *Sender) Send(ctx context.Context, url string, payload *WebhookPayload) 
 	}
 	defer func() { _ = resp.Body.Close() }()
 
-	if resp.StatusCode >= 400 {
+	if resp.StatusCode >= http.StatusBadRequest {
 		return fmt.Errorf("webhook returned status %d", resp.StatusCode)
 	}
 

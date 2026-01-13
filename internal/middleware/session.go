@@ -11,7 +11,16 @@ import (
 	"fiozap/internal/model"
 )
 
-const SessionContextKey contextKey = "session"
+const (
+	SessionContextKey contextKey = "session"
+	paramSessionID    string     = "sessionId"
+)
+
+var (
+	errUserNotFound    = errors.New("user not found")
+	errSessionRequired = errors.New("session name is required")
+	errSessionNotFound = errors.New("session not found")
+)
 
 type SessionMiddleware struct {
 	sessionRepo *repository.SessionRepository
@@ -25,20 +34,19 @@ func (m *SessionMiddleware) ValidateSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := GetUserFromContext(r.Context())
 		if user == nil {
-			model.RespondUnauthorized(w, errors.New("user not found"))
+			model.RespondUnauthorized(w, errUserNotFound)
 			return
 		}
 
-		sessionName := chi.URLParam(r, "sessionId")
+		sessionName := chi.URLParam(r, paramSessionID)
 		if sessionName == "" {
-			model.RespondBadRequest(w, errors.New("session name is required"))
+			model.RespondBadRequest(w, errSessionRequired)
 			return
 		}
 
-		// Lookup session by user ID and session name (unique per user)
 		session, err := m.sessionRepo.GetByUserAndName(user.ID, sessionName)
 		if err != nil {
-			model.RespondNotFound(w, errors.New("session not found"))
+			model.RespondNotFound(w, errSessionNotFound)
 			return
 		}
 

@@ -1,9 +1,26 @@
 package config
 
 import (
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
+)
+
+const (
+	defaultPort      = "8080"
+	defaultAddress   = "0.0.0.0"
+	defaultDBHost    = "localhost"
+	defaultDBPort    = "5432"
+	defaultDBUser    = "fiozap"
+	defaultDBPass    = "fiozap123"
+	defaultDBName    = "fiozap"
+	defaultDBSSLMode = "disable"
+	defaultLogLevel  = "info"
+	defaultLogType   = "console"
+	tokenLength      = 16
 )
 
 type Config struct {
@@ -24,22 +41,42 @@ type Config struct {
 func Load() (*Config, error) {
 	_ = godotenv.Load()
 
-	cfg := &Config{
-		Port:       getEnv("PORT", "8080"),
-		Address:    getEnv("ADDRESS", "0.0.0.0"),
-		AdminToken: getEnv("ADMIN_TOKEN", generateRandomToken()),
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     getEnv("DB_PORT", "5432"),
-		DBUser:     getEnv("DB_USER", "fiozap"),
-		DBPassword: getEnv("DB_PASSWORD", "fiozap123"),
-		DBName:     getEnv("DB_NAME", "fiozap"),
-		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
-		LogLevel:   getEnv("LOG_LEVEL", "info"),
-		LogType:    getEnv("LOG_TYPE", "console"),
+	return &Config{
+		Port:       getEnv("PORT", defaultPort),
+		Address:    getEnv("ADDRESS", defaultAddress),
+		AdminToken: getEnv("ADMIN_TOKEN", generateToken()),
+		DBHost:     getEnv("DB_HOST", defaultDBHost),
+		DBPort:     getEnv("DB_PORT", defaultDBPort),
+		DBUser:     getEnv("DB_USER", defaultDBUser),
+		DBPassword: getEnv("DB_PASSWORD", defaultDBPass),
+		DBName:     getEnv("DB_NAME", defaultDBName),
+		DBSSLMode:  getEnv("DB_SSLMODE", defaultDBSSLMode),
+		LogLevel:   getEnv("LOG_LEVEL", defaultLogLevel),
+		LogType:    getEnv("LOG_TYPE", defaultLogType),
 		WADebug:    getEnv("WA_DEBUG", ""),
-	}
+	}, nil
+}
 
-	return cfg, nil
+func (c *Config) DSN() string {
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		c.DBHost, c.DBPort, c.DBUser, c.DBPassword, c.DBName, c.DBSSLMode,
+	)
+}
+
+func (c *Config) PostgresURL() string {
+	return fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		c.DBUser, c.DBPassword, c.DBHost, c.DBPort, c.DBName, c.DBSSLMode,
+	)
+}
+
+func (c *Config) ServerAddr() string {
+	return c.Address + ":" + c.Port
+}
+
+func (c *Config) IsPrettyLog() bool {
+	return c.LogType == "console"
 }
 
 func getEnv(key, defaultValue string) string {
@@ -49,11 +86,8 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
-func generateRandomToken() string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, 32)
-	for i := range b {
-		b[i] = charset[i%len(charset)]
-	}
-	return string(b)
+func generateToken() string {
+	b := make([]byte, tokenLength)
+	_, _ = rand.Read(b)
+	return hex.EncodeToString(b)
 }

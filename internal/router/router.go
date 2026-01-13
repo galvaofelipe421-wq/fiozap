@@ -17,6 +17,8 @@ import (
 	"fiozap/internal/webhook"
 )
 
+const requestTimeout = 60 * time.Second
+
 type Router struct {
 	mux            chi.Router
 	dispatcher     *webhook.Dispatcher
@@ -26,24 +28,20 @@ type Router struct {
 func New(cfg *config.Config, db *sqlx.DB) *Router {
 	r := chi.NewRouter()
 
-	// Middlewares
 	r.Use(chiMiddleware.RealIP)
 	r.Use(chiMiddleware.Recoverer)
-	r.Use(chiMiddleware.Timeout(60 * time.Second))
+	r.Use(chiMiddleware.Timeout(requestTimeout))
 	r.Use(middleware.Logging)
 	r.Use(cors)
 
-	// Repositories
 	userRepo := repository.NewUserRepository(db)
 	sessionRepo := repository.NewSessionRepository(db)
 	webhookRepo := repository.NewWebhookRepository(db)
 
-	// Middlewares
 	authMiddleware := middleware.NewAuthMiddleware(userRepo)
 	adminMiddleware := middleware.NewAdminMiddleware(cfg.AdminToken)
 	sessionMiddleware := middleware.NewSessionMiddleware(sessionRepo)
 
-	// Services
 	sessionService := service.NewSessionService(userRepo, sessionRepo, cfg)
 	sessionService.SetWebhookRepo(webhookRepo)
 	dispatcher := webhook.NewDispatcher(webhookRepo, sessionRepo)
@@ -54,7 +52,6 @@ func New(cfg *config.Config, db *sqlx.DB) *Router {
 	groupService := service.NewGroupService(sessionService)
 	newsletterService := service.NewNewsletterService(sessionService)
 
-	// Handlers
 	healthHandler := handler.NewHealthHandler()
 	adminHandler := handler.NewAdminHandler(userRepo)
 	sessionHandler := handler.NewSessionHandler(sessionService)
