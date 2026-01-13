@@ -60,6 +60,11 @@ func Writer() io.Writer {
 	return log
 }
 
+// RawWriter returns os.Stdout for raw output (like QR codes)
+func RawWriter() io.Writer {
+	return os.Stdout
+}
+
 // PrettyJSON formats data as JSON with optional pretty printing and color
 func PrettyJSON(v interface{}) string {
 	if !prettyMode {

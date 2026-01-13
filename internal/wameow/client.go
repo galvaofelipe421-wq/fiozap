@@ -98,7 +98,9 @@ func waLogger(module string) waLog.Logger {
 }
 
 func (c *Client) connectWithQR(ctx context.Context) error {
-	qrChan, _ := c.wac.GetQRChannel(ctx)
+	// Use background context for QR channel to avoid timeout issues
+	// QR codes should remain valid until scanned or all codes expire (~60 seconds each, multiple codes)
+	qrChan, _ := c.wac.GetQRChannel(context.Background())
 	if err := c.wac.Connect(); err != nil {
 		return fmt.Errorf("failed to connect: %w", err)
 	}
@@ -106,8 +108,8 @@ func (c *Client) connectWithQR(ctx context.Context) error {
 	go func() {
 		for evt := range qrChan {
 			if evt.Event == "code" {
-				qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, logger.Writer())
 				logger.Get().Info().Str("event", "qr_code").Msg("scan to login")
+				qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, logger.RawWriter())
 				if c.qrCallback != nil {
 					c.qrCallback(evt.Code)
 				}
@@ -116,6 +118,9 @@ func (c *Client) connectWithQR(ctx context.Context) error {
 				}
 			} else {
 				logger.Get().Info().Str("event", "login").Str("status", evt.Event).Msg("")
+				if evt.Event == "timeout" {
+					logger.Get().Warn().Msg("QR code expired, please reconnect to get a new one")
+				}
 			}
 		}
 	}()
