@@ -2226,16 +2226,20 @@ const docTemplate = `{
             ],
             "properties": {
                 "events": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-session"
                 },
                 "proxyUrl": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "webhook": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -2355,7 +2359,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "FioZap API",

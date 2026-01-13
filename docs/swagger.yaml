@@ -110,12 +110,16 @@ definitions:
   model.SessionCreateRequest:
     properties:
       events:
+        example: ""
         type: string
       name:
+        example: my-session
         type: string
       proxyUrl:
+        example: ""
         type: string
       webhook:
+        example: ""
         type: string
     required:
     - name
@@ -183,7 +187,6 @@ definitions:
       webhookurl:
         type: string
     type: object
-host: localhost:8080
 info:
   contact:
     email: support@fiozap.io

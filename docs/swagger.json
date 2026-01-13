@@ -14,7 +14,6 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
     "basePath": "/",
     "paths": {
         "/admin/sessions": {
@@ -2220,16 +2219,20 @@
             ],
             "properties": {
                 "events": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-session"
                 },
                 "proxyUrl": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "webhook": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 }
             }
         },

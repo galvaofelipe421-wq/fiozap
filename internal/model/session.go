@@ -16,10 +16,10 @@ type Session struct {
 }
 
 type SessionCreateRequest struct {
-	Name     string `json:"name" validate:"required"`
-	Webhook  string `json:"webhook,omitempty"`
-	Events   string `json:"events,omitempty"`
-	ProxyURL string `json:"proxyUrl,omitempty"`
+	Name     string `json:"name" validate:"required" example:"my-session"`
+	Webhook  string `json:"webhook,omitempty" example:""`
+	Events   string `json:"events,omitempty" example:""`
+	ProxyURL string `json:"proxyUrl,omitempty" example:""`
 }
 
 type SessionUpdateRequest struct {

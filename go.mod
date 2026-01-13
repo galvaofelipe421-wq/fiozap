@@ -2,8 +2,6 @@ module fiozap
 
 go 1.24.0
 
-toolchain go1.25.5
-
 require (
 	github.com/gorilla/mux v1.8.1
 	github.com/jmoiron/sqlx v1.4.0
