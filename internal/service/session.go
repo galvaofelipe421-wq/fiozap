@@ -28,14 +28,11 @@ type SessionService struct {
 }
 
 func NewSessionService(userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository, cfg *config.Config) *SessionService {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBSSLMode)
-
 	return &SessionService{
 		userRepo:    userRepo,
 		sessionRepo: sessionRepo,
 		clients:     make(map[string]*wameow.Client),
-		dbConnStr:   connStr,
+		dbConnStr:   cfg.DSN(),
 	}
 }
 
