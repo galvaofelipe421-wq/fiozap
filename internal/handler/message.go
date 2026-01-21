@@ -25,8 +25,8 @@ func NewMessageHandler(messageService *service.MessageService) *MessageHandler {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.TextMessage true "Message data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/text [post]
 func (h *MessageHandler) SendText(w http.ResponseWriter, r *http.Request) {
@@ -70,8 +70,8 @@ func (h *MessageHandler) SendText(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.ImageMessage true "Image data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/image [post]
 func (h *MessageHandler) SendImage(w http.ResponseWriter, r *http.Request) {
@@ -115,8 +115,8 @@ func (h *MessageHandler) SendImage(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.AudioMessage true "Audio data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/audio [post]
 func (h *MessageHandler) SendAudio(w http.ResponseWriter, r *http.Request) {
@@ -160,8 +160,8 @@ func (h *MessageHandler) SendAudio(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.VideoMessage true "Video data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/video [post]
 func (h *MessageHandler) SendVideo(w http.ResponseWriter, r *http.Request) {
@@ -205,8 +205,8 @@ func (h *MessageHandler) SendVideo(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.DocumentMessage true "Document data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/document [post]
 func (h *MessageHandler) SendDocument(w http.ResponseWriter, r *http.Request) {
@@ -254,8 +254,8 @@ func (h *MessageHandler) SendDocument(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.LocationMessage true "Location data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/location [post]
 func (h *MessageHandler) SendLocation(w http.ResponseWriter, r *http.Request) {
@@ -294,8 +294,8 @@ func (h *MessageHandler) SendLocation(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.ContactMessage true "Contact data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/contact [post]
 func (h *MessageHandler) SendContact(w http.ResponseWriter, r *http.Request) {
@@ -333,8 +333,8 @@ func (h *MessageHandler) SendContact(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.ReactionMessage true "Reaction data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/reaction [post]
 func (h *MessageHandler) React(w http.ResponseWriter, r *http.Request) {
@@ -378,8 +378,8 @@ func (h *MessageHandler) React(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.DeleteMessage true "Delete data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/delete [post]
 func (h *MessageHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -423,8 +423,8 @@ func (h *MessageHandler) Delete(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.StickerMessage true "Sticker data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/sticker [post]
 func (h *MessageHandler) SendSticker(w http.ResponseWriter, r *http.Request) {
@@ -468,8 +468,8 @@ func (h *MessageHandler) SendSticker(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.PollMessage true "Poll data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/poll [post]
 func (h *MessageHandler) SendPoll(w http.ResponseWriter, r *http.Request) {
@@ -517,8 +517,8 @@ func (h *MessageHandler) SendPoll(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.ListMessage true "List data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/list [post]
 func (h *MessageHandler) SendList(w http.ResponseWriter, r *http.Request) {
@@ -562,8 +562,8 @@ func (h *MessageHandler) SendList(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.ButtonsMessage true "Buttons data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/buttons [post]
 func (h *MessageHandler) SendButtons(w http.ResponseWriter, r *http.Request) {
@@ -611,8 +611,8 @@ func (h *MessageHandler) SendButtons(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.EditMessage true "Edit data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/edit [post]
 func (h *MessageHandler) Edit(w http.ResponseWriter, r *http.Request) {
@@ -660,8 +660,8 @@ func (h *MessageHandler) Edit(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.MarkReadMessage true "Mark read data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/markread [post]
 func (h *MessageHandler) MarkRead(w http.ResponseWriter, r *http.Request) {
@@ -704,8 +704,8 @@ func (h *MessageHandler) MarkRead(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.StatusTextMessage true "Status text data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/status/text [post]
 func (h *MessageHandler) SetStatusText(w http.ResponseWriter, r *http.Request) {
@@ -744,8 +744,8 @@ func (h *MessageHandler) SetStatusText(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadimage [post]
 func (h *MessageHandler) DownloadImage(w http.ResponseWriter, r *http.Request) {
@@ -779,8 +779,8 @@ func (h *MessageHandler) DownloadImage(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadvideo [post]
 func (h *MessageHandler) DownloadVideo(w http.ResponseWriter, r *http.Request) {
@@ -814,8 +814,8 @@ func (h *MessageHandler) DownloadVideo(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadaudio [post]
 func (h *MessageHandler) DownloadAudio(w http.ResponseWriter, r *http.Request) {
@@ -849,8 +849,8 @@ func (h *MessageHandler) DownloadAudio(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloaddocument [post]
 func (h *MessageHandler) DownloadDocument(w http.ResponseWriter, r *http.Request) {
@@ -884,8 +884,8 @@ func (h *MessageHandler) DownloadDocument(w http.ResponseWriter, r *http.Request
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadsticker [post]
 func (h *MessageHandler) DownloadSticker(w http.ResponseWriter, r *http.Request) {
@@ -919,8 +919,8 @@ func (h *MessageHandler) DownloadSticker(w http.ResponseWriter, r *http.Request)
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param message body model.ArchiveChatMessage true "Archive data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/archive [post]
 func (h *MessageHandler) ArchiveChat(w http.ResponseWriter, r *http.Request) {

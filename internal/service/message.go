@@ -56,7 +56,6 @@ func (s *MessageService) SendText(ctx context.Context, userID, sessionID string,
 	logger.Infof("Message sent: %s", msgID)
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -118,7 +117,6 @@ func (s *MessageService) SendImage(ctx context.Context, userID, sessionID string
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -189,7 +187,6 @@ func (s *MessageService) SendAudio(ctx context.Context, userID, sessionID string
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -251,7 +248,6 @@ func (s *MessageService) SendVideo(ctx context.Context, userID, sessionID string
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -314,7 +310,6 @@ func (s *MessageService) SendDocument(ctx context.Context, userID, sessionID str
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -351,7 +346,6 @@ func (s *MessageService) SendLocation(ctx context.Context, userID, sessionID str
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -386,7 +380,6 @@ func (s *MessageService) SendContact(ctx context.Context, userID, sessionID stri
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -420,7 +413,6 @@ func (s *MessageService) React(ctx context.Context, userID, sessionID string, re
 	}
 
 	return map[string]interface{}{
-		"details":   "Reacted",
 		"timestamp": resp.Timestamp.Unix(),
 	}, nil
 }
@@ -443,7 +435,6 @@ func (s *MessageService) Delete(ctx context.Context, userID, sessionID string, r
 	}
 
 	return map[string]interface{}{
-		"details":   "Deleted",
 		"timestamp": resp.Timestamp.Unix(),
 	}, nil
 }
@@ -504,7 +495,6 @@ func (s *MessageService) SendSticker(ctx context.Context, userID, sessionID stri
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -533,7 +523,6 @@ func (s *MessageService) SendPoll(ctx context.Context, userID, sessionID string,
 	}
 
 	return map[string]interface{}{
-		"details":   "Poll sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -601,7 +590,6 @@ func (s *MessageService) SendList(ctx context.Context, userID, sessionID string,
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -653,7 +641,6 @@ func (s *MessageService) SendButtons(ctx context.Context, userID, sessionID stri
 	}
 
 	return map[string]interface{}{
-		"details":   "Sent",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        msgID,
 	}, nil
@@ -683,7 +670,6 @@ func (s *MessageService) EditMessage(ctx context.Context, userID, sessionID stri
 	}
 
 	return map[string]interface{}{
-		"details":   "Edited",
 		"timestamp": resp.Timestamp.Unix(),
 		"id":        req.MessageID,
 	}, nil
@@ -714,7 +700,6 @@ func (s *MessageService) MarkRead(ctx context.Context, userID, sessionID string,
 	}
 
 	return map[string]interface{}{
-		"details": "Messages marked as read",
 	}, nil
 }
 
@@ -730,7 +715,6 @@ func (s *MessageService) SetStatusText(ctx context.Context, userID, sessionID st
 	}
 
 	return map[string]interface{}{
-		"details": "Status set",
 	}, nil
 }
 
@@ -891,13 +875,8 @@ func (s *MessageService) ArchiveChat(ctx context.Context, userID, sessionID stri
 		return nil, fmt.Errorf("failed to archive chat: %w", err)
 	}
 
-	actionDesc := "archived"
-	if !req.Archive {
-		actionDesc = "unarchived"
-	}
-
 	return map[string]interface{}{
-		"details": "Chat " + actionDesc,
+		"archived": req.Archive,
 	}, nil
 }
 

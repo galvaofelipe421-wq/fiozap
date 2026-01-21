@@ -24,8 +24,8 @@ func NewGroupHandler(groupService *service.GroupService) *GroupHandler {
 // @Accept json
 // @Produce json
 // @Param request body object{name=string,participants=[]string} true "Group data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/create [post]
@@ -64,8 +64,8 @@ func (h *GroupHandler) Create(w http.ResponseWriter, r *http.Request) {
 // @Summary List groups
 // @Tags Group
 // @Produce json
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/list [get]
@@ -91,8 +91,8 @@ func (h *GroupHandler) List(w http.ResponseWriter, r *http.Request) {
 // @Tags Group
 // @Produce json
 // @Param jid query string true "Group JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/info [get]
@@ -124,8 +124,8 @@ func (h *GroupHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 // @Tags Group
 // @Produce json
 // @Param jid query string true "Group JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/invitelink [get]
@@ -158,8 +158,8 @@ func (h *GroupHandler) GetInviteLink(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{jid=string} true "Group JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/leave [post]
@@ -190,7 +190,7 @@ func (h *GroupHandler) Leave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Left group"})
+	model.RespondOK(w, nil)
 }
 
 // UpdateParticipants godoc
@@ -200,8 +200,8 @@ func (h *GroupHandler) Leave(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{jid=string,participants=[]string,action=string} true "Participants data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/updateparticipants [post]
@@ -252,8 +252,8 @@ func (h *GroupHandler) UpdateParticipants(w http.ResponseWriter, r *http.Request
 // @Accept json
 // @Produce json
 // @Param request body object{jid=string,name=string} true "Group name data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/name [post]
@@ -285,7 +285,7 @@ func (h *GroupHandler) SetName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Group name updated"})
+	model.RespondOK(w, nil)
 }
 
 // SetTopic godoc
@@ -294,8 +294,8 @@ func (h *GroupHandler) SetName(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{jid=string,topic=string} true "Group topic data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/topic [post]
@@ -327,7 +327,7 @@ func (h *GroupHandler) SetTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Group topic updated"})
+	model.RespondOK(w, nil)
 }
 
 // SetPhoto godoc
@@ -337,8 +337,8 @@ func (h *GroupHandler) SetTopic(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.GroupPhotoRequest true "Group photo data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/photo [post]
@@ -395,7 +395,7 @@ func (h *GroupHandler) SetPhoto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Group photo set", "picture_id": pictureID})
+	model.RespondOK(w, map[string]string{"pictureId": pictureID})
 }
 
 // RemovePhoto godoc
@@ -404,8 +404,8 @@ func (h *GroupHandler) SetPhoto(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{jid=string} true "Group JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/photo/remove [post]
@@ -436,7 +436,7 @@ func (h *GroupHandler) RemovePhoto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Group photo removed"})
+	model.RespondOK(w, nil)
 }
 
 // SetAnnounce godoc
@@ -446,8 +446,8 @@ func (h *GroupHandler) RemovePhoto(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.GroupAnnounceRequest true "Group announce data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/announce [post]
@@ -476,7 +476,7 @@ func (h *GroupHandler) SetAnnounce(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Group announce mode updated"})
+	model.RespondOK(w, nil)
 }
 
 // SetLocked godoc
@@ -486,8 +486,8 @@ func (h *GroupHandler) SetAnnounce(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.GroupLockedRequest true "Group locked data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/locked [post]
@@ -516,7 +516,7 @@ func (h *GroupHandler) SetLocked(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Group locked mode updated"})
+	model.RespondOK(w, nil)
 }
 
 // SetEphemeral godoc
@@ -526,8 +526,8 @@ func (h *GroupHandler) SetLocked(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.GroupEphemeralRequest true "Group ephemeral data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/ephemeral [post]
@@ -561,7 +561,7 @@ func (h *GroupHandler) SetEphemeral(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Group ephemeral timer updated"})
+	model.RespondOK(w, nil)
 }
 
 // Join godoc
@@ -570,8 +570,8 @@ func (h *GroupHandler) SetEphemeral(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.GroupJoinRequest true "Group join data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/join [post]
@@ -609,8 +609,8 @@ func (h *GroupHandler) Join(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.GroupInviteInfoRequest true "Group invite info request"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/group/inviteinfo [post]

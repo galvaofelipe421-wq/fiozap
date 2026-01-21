@@ -23,8 +23,8 @@ func NewNewsletterHandler(newsletterService *service.NewsletterService) *Newslet
 // @Summary List newsletters
 // @Tags Newsletter
 // @Produce json
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/list [get]
@@ -50,8 +50,8 @@ func (h *NewsletterHandler) List(w http.ResponseWriter, r *http.Request) {
 // @Tags Newsletter
 // @Produce json
 // @Param jid query string true "Newsletter JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/info [get]
@@ -83,8 +83,8 @@ func (h *NewsletterHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 // @Tags Newsletter
 // @Produce json
 // @Param key query string true "Invite key/code"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/info/invite [get]
@@ -119,8 +119,8 @@ func (h *NewsletterHandler) GetInfoWithInvite(w http.ResponseWriter, r *http.Req
 // @Param jid query string true "Newsletter JID"
 // @Param count query int false "Number of messages to fetch" default(50)
 // @Param before query int false "Fetch messages before this server ID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/messages [get]
@@ -167,8 +167,8 @@ func (h *NewsletterHandler) GetMessages(w http.ResponseWriter, r *http.Request) 
 // @Accept json
 // @Produce json
 // @Param request body model.NewsletterFollowRequest true "Newsletter JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/follow [post]
@@ -197,7 +197,7 @@ func (h *NewsletterHandler) Follow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Newsletter followed"})
+	model.RespondOK(w, nil)
 }
 
 // Unfollow godoc
@@ -206,8 +206,8 @@ func (h *NewsletterHandler) Follow(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.NewsletterFollowRequest true "Newsletter JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/unfollow [post]
@@ -236,7 +236,7 @@ func (h *NewsletterHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Newsletter unfollowed"})
+	model.RespondOK(w, nil)
 }
 
 // Mute godoc
@@ -246,8 +246,8 @@ func (h *NewsletterHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.NewsletterMuteRequest true "Mute request"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/mute [post]
@@ -276,11 +276,7 @@ func (h *NewsletterHandler) Mute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status := "unmuted"
-	if req.Mute {
-		status = "muted"
-	}
-	model.RespondOK(w, map[string]string{"details": "Newsletter " + status})
+	model.RespondOK(w, nil)
 }
 
 // MarkViewed godoc
@@ -289,8 +285,8 @@ func (h *NewsletterHandler) Mute(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.NewsletterMarkViewedRequest true "Mark viewed request"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/markviewed [post]
@@ -324,7 +320,7 @@ func (h *NewsletterHandler) MarkViewed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Messages marked as viewed"})
+	model.RespondOK(w, nil)
 }
 
 // SendReaction godoc
@@ -333,8 +329,8 @@ func (h *NewsletterHandler) MarkViewed(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.NewsletterReactionRequest true "Reaction request"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/reaction [post]
@@ -368,7 +364,7 @@ func (h *NewsletterHandler) SendReaction(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Reaction sent"})
+	model.RespondOK(w, nil)
 }
 
 // SubscribeLiveUpdates godoc
@@ -378,8 +374,8 @@ func (h *NewsletterHandler) SendReaction(w http.ResponseWriter, r *http.Request)
 // @Accept json
 // @Produce json
 // @Param request body model.NewsletterFollowRequest true "Newsletter JID"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/liveupdates [post]
@@ -408,10 +404,7 @@ func (h *NewsletterHandler) SubscribeLiveUpdates(w http.ResponseWriter, r *http.
 		return
 	}
 
-	model.RespondOK(w, map[string]interface{}{
-		"details":  "Subscribed to live updates",
-		"duration": duration.String(),
-	})
+	model.RespondOK(w, map[string]string{"duration": duration.String()})
 }
 
 // Create godoc
@@ -420,8 +413,8 @@ func (h *NewsletterHandler) SubscribeLiveUpdates(w http.ResponseWriter, r *http.
 // @Accept json
 // @Produce json
 // @Param request body model.NewsletterCreateRequest true "Newsletter details"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/newsletter/create [post]

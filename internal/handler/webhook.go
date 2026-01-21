@@ -40,8 +40,8 @@ func NewWebhookHandler(sessionRepo *repository.SessionRepository) *WebhookHandle
 // @Tags Webhook
 // @Produce json
 // @Param sessionId path string true "Session name"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/webhook [get]
 func (h *WebhookHandler) Get(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +57,8 @@ func (h *WebhookHandler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	model.RespondOK(w, map[string]interface{}{
-		"webhook":   session.Webhook,
-		"subscribe": events,
+		"webhook": session.Webhook,
+		"events":  events,
 	})
 }
 
@@ -69,8 +69,8 @@ func (h *WebhookHandler) Get(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session name"
 // @Param request body model.WebhookRequest true "Webhook configuration"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/webhook [post]
 func (h *WebhookHandler) Set(w http.ResponseWriter, r *http.Request) {
@@ -114,8 +114,8 @@ func (h *WebhookHandler) Set(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session name"
 // @Param request body object{webhook=string,events=[]string,active=bool} true "Webhook update data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/webhook [put]
 func (h *WebhookHandler) Update(w http.ResponseWriter, r *http.Request) {
@@ -168,8 +168,8 @@ func (h *WebhookHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Tags Webhook
 // @Produce json
 // @Param sessionId path string true "Session name"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/webhook [delete]
 func (h *WebhookHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -184,9 +184,7 @@ func (h *WebhookHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{
-		"details": "Webhook deleted successfully",
-	})
+	model.RespondOK(w, nil)
 }
 
 func isValidEvent(event string) bool {

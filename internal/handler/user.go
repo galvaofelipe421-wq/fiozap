@@ -24,8 +24,8 @@ func NewUserHandler(userService *service.UserService) *UserHandler {
 // @Accept json
 // @Produce json
 // @Param request body object{phone=[]string} true "Phone numbers"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/user/info [post]
@@ -66,8 +66,8 @@ func (h *UserHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{phone=[]string} true "Phone numbers"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/user/check [post]
@@ -108,8 +108,8 @@ func (h *UserHandler) CheckUser(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{phone=string,preview=bool} true "Phone and preview option"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/user/avatar [post]
@@ -148,8 +148,8 @@ func (h *UserHandler) GetAvatar(w http.ResponseWriter, r *http.Request) {
 // @Summary Get contacts
 // @Tags User
 // @Produce json
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/user/contacts [get]
@@ -177,8 +177,8 @@ func (h *UserHandler) GetContacts(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{presence=string} true "Presence (available/unavailable)"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/user/presence [post]
@@ -218,8 +218,8 @@ func (h *UserHandler) SendPresence(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body object{phone=string,state=string,media=string} true "Chat presence data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/presence [post]
@@ -261,8 +261,8 @@ func (h *UserHandler) ChatPresence(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.RejectCallRequest true "Call rejection data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/call/reject [post]
@@ -303,8 +303,8 @@ func (h *UserHandler) RejectCall(w http.ResponseWriter, r *http.Request) {
 // @Summary Get newsletters
 // @Tags User
 // @Produce json
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/user/newsletters [get]
@@ -330,8 +330,8 @@ func (h *UserHandler) GetNewsletters(w http.ResponseWriter, r *http.Request) {
 // @Tags User
 // @Produce json
 // @Param phone query string true "Phone number"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/user/getlid [get]

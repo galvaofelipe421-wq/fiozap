@@ -22,8 +22,8 @@ func NewSessionHandler(sessionService *service.SessionService) *SessionHandler {
 // @Summary List sessions
 // @Tags Sessions
 // @Produce json
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions [get]
 func (h *SessionHandler) ListSessions(w http.ResponseWriter, r *http.Request) {
@@ -48,9 +48,9 @@ func (h *SessionHandler) ListSessions(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param request body model.SessionCreateRequest true "Session data"
-// @Success 201 {object} model.Response
-// @Failure 400 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions [post]
 func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
@@ -85,9 +85,9 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 // @Tags Sessions
 // @Produce json
 // @Param sessionId path string true "Session ID"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
-// @Failure 404 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId} [get]
 func (h *SessionHandler) GetSession(w http.ResponseWriter, r *http.Request) {
@@ -107,9 +107,9 @@ func (h *SessionHandler) GetSession(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param request body model.SessionUpdateRequest true "Session data"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId} [put]
 func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
@@ -139,9 +139,9 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 // @Tags Sessions
 // @Produce json
 // @Param sessionId path string true "Session ID"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
-// @Failure 404 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId} [delete]
 func (h *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
@@ -168,10 +168,10 @@ func (h *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param request body model.SessionConnectRequest false "Connection options"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
-// @Failure 401 {object} model.Response
-// @Failure 500 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/connect [post]
 func (h *SessionHandler) Connect(w http.ResponseWriter, r *http.Request) {
@@ -209,8 +209,8 @@ func (h *SessionHandler) Connect(w http.ResponseWriter, r *http.Request) {
 // @Tags Sessions
 // @Produce json
 // @Param sessionId path string true "Session ID"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/disconnect [post]
 func (h *SessionHandler) Disconnect(w http.ResponseWriter, r *http.Request) {
@@ -235,8 +235,8 @@ func (h *SessionHandler) Disconnect(w http.ResponseWriter, r *http.Request) {
 // @Tags Sessions
 // @Produce json
 // @Param sessionId path string true "Session ID"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/logout [post]
 func (h *SessionHandler) Logout(w http.ResponseWriter, r *http.Request) {
@@ -260,8 +260,8 @@ func (h *SessionHandler) Logout(w http.ResponseWriter, r *http.Request) {
 // @Tags Sessions
 // @Produce json
 // @Param sessionId path string true "Session ID"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/status [get]
 func (h *SessionHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
@@ -281,8 +281,8 @@ func (h *SessionHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
 // @Tags Sessions
 // @Produce json
 // @Param sessionId path string true "Session ID"
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/qr [get]
 func (h *SessionHandler) GetQR(w http.ResponseWriter, r *http.Request) {
@@ -310,8 +310,8 @@ func (h *SessionHandler) GetQR(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param sessionId path string true "Session ID"
 // @Param request body model.PairPhoneRequest true "Phone number"
-// @Success 200 {object} model.Response
-// @Failure 400 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/pairphone [post]
 func (h *SessionHandler) PairPhone(w http.ResponseWriter, r *http.Request) {
@@ -346,8 +346,8 @@ func (h *SessionHandler) PairPhone(w http.ResponseWriter, r *http.Request) {
 // @Summary List all sessions
 // @Tags Admin
 // @Produce json
-// @Success 200 {object} model.Response
-// @Failure 401 {object} model.Response
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
 // @Security AdminKeyAuth
 // @Router /admin/sessions [get]
 func (h *SessionHandler) AdminListAllSessions(w http.ResponseWriter, r *http.Request) {

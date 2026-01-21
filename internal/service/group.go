@@ -333,7 +333,6 @@ func (s *GroupService) Join(ctx context.Context, userID, sessionID string, code 
 
 	return map[string]interface{}{
 		"jid":     groupJID.String(),
-		"details": "Group joined successfully",
 	}, nil
 }
 
