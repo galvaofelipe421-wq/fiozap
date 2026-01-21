@@ -28,11 +28,12 @@ type Router struct {
 func New(cfg *config.Config, db *sqlx.DB) *Router {
 	r := chi.NewRouter()
 
+	r.Use(chiMiddleware.RequestID)
 	r.Use(chiMiddleware.RealIP)
 	r.Use(chiMiddleware.Recoverer)
 	r.Use(chiMiddleware.Timeout(requestTimeout))
 	r.Use(middleware.Logging)
-	r.Use(cors)
+	r.Use(corsHandler(cfg))
 
 	userRepo := repository.NewUserRepository(db)
 	sessionRepo := repository.NewSessionRepository(db)
@@ -204,17 +205,23 @@ func (rt *Router) GetSessionService() *service.SessionService {
 	return rt.sessionService
 }
 
-func cors(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Token")
+func corsHandler(cfg *config.Config) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			origin := cfg.CORSOrigin
+			if origin == "" {
+				origin = "*"
+			}
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Token, X-Request-ID")
 
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
 
-		next.ServeHTTP(w, r)
-	})
+			next.ServeHTTP(w, r)
+		})
+	}
 }

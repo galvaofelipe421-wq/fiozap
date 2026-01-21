@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
 
 	"fiozap/internal/logger"
@@ -59,6 +60,7 @@ func Logging(next http.Handler) http.Handler {
 			Int("bytes", rw.size).
 			Dur("latency", duration).
 			Str("ip", getClientIP(r)).
+			Str("reqId", chiMiddleware.GetReqID(r.Context())).
 			Msg("http")
 	})
 }

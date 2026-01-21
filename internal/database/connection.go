@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -13,8 +14,12 @@ import (
 )
 
 const (
-	driverPostgres = "postgres"
-	dbOwner        = "fiozap"
+	driverPostgres  = "postgres"
+	dbOwner         = "fiozap"
+	maxOpenConns    = 25
+	maxIdleConns    = 5
+	connMaxLifetime = 5 * time.Minute
+	connMaxIdleTime = 1 * time.Minute
 )
 
 func Connect(cfg *config.Config) (*sqlx.DB, error) {
@@ -22,6 +27,11 @@ func Connect(cfg *config.Config) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open postgres: %w", err)
 	}
+
+	db.SetMaxOpenConns(maxOpenConns)
+	db.SetMaxIdleConns(maxIdleConns)
+	db.SetConnMaxLifetime(connMaxLifetime)
+	db.SetConnMaxIdleTime(connMaxIdleTime)
 
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed to ping postgres: %w", err)

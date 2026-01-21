@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"os"
 
@@ -36,15 +37,16 @@ type Config struct {
 	LogLevel   string
 	LogType    string
 	WADebug    string
+	CORSOrigin string
 }
 
 func Load() (*Config, error) {
 	_ = godotenv.Load()
 
-	return &Config{
+	cfg := &Config{
 		Port:       getEnv("PORT", defaultPort),
 		Address:    getEnv("ADDRESS", defaultAddress),
-		AdminToken: getEnv("ADMIN_TOKEN", generateToken()),
+		AdminToken: getEnv("ADMIN_TOKEN", ""),
 		DBHost:     getEnv("DB_HOST", defaultDBHost),
 		DBPort:     getEnv("DB_PORT", defaultDBPort),
 		DBUser:     getEnv("DB_USER", defaultDBUser),
@@ -54,7 +56,31 @@ func Load() (*Config, error) {
 		LogLevel:   getEnv("LOG_LEVEL", defaultLogLevel),
 		LogType:    getEnv("LOG_TYPE", defaultLogType),
 		WADebug:    getEnv("WA_DEBUG", ""),
-	}, nil
+		CORSOrigin: getEnv("CORS_ORIGIN", "*"),
+	}
+
+	if cfg.AdminToken == "" {
+		cfg.AdminToken = generateToken()
+	}
+
+	if err := cfg.Validate(); err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
+}
+
+func (c *Config) Validate() error {
+	if c.DBHost == "" {
+		return errors.New("DB_HOST is required")
+	}
+	if c.DBName == "" {
+		return errors.New("DB_NAME is required")
+	}
+	if c.DBUser == "" {
+		return errors.New("DB_USER is required")
+	}
+	return nil
 }
 
 func (c *Config) DSN() string {
