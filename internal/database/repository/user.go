@@ -41,7 +41,7 @@ func (r *UserRepository) Create(req *model.UserCreateRequest) (*model.User, erro
 
 func (r *UserRepository) GetByID(id string) (*model.User, error) {
 	var user model.User
-	query := `SELECT "id", "name", "token", COALESCE("maxSessions", 5) as "maxSessions", "createdAt" FROM "fzUser" WHERE "id" = $1`
+	query := `SELECT "id", "name", "token", "maxSessions", "createdAt" FROM "fzUser" WHERE "id" = $1`
 
 	if err := r.db.Get(&user, query, id); err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (r *UserRepository) GetByID(id string) (*model.User, error) {
 
 func (r *UserRepository) GetByToken(token string) (*model.User, error) {
 	var user model.User
-	query := `SELECT "id", "name", "token", COALESCE("maxSessions", 5) as "maxSessions", "createdAt" FROM "fzUser" WHERE "token" = $1`
+	query := `SELECT "id", "name", "token", "maxSessions", "createdAt" FROM "fzUser" WHERE "token" = $1`
 
 	if err := r.db.Get(&user, query, token); err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (r *UserRepository) GetByToken(token string) (*model.User, error) {
 
 func (r *UserRepository) GetAll() ([]model.User, error) {
 	var users []model.User
-	query := `SELECT "id", "name", "token", COALESCE("maxSessions", 5) as "maxSessions", "createdAt" FROM "fzUser"`
+	query := `SELECT "id", "name", "token", "maxSessions", "createdAt" FROM "fzUser"`
 
 	if err := r.db.Select(&users, query); err != nil {
 		return nil, err

@@ -189,12 +189,12 @@ func (r *SessionRepository) CountByUser(userID string) (int, error) {
 }
 
 func (r *SessionRepository) BelongsToUser(sessionID, userID string) (bool, error) {
-	var count int
-	query := `SELECT COUNT(*) FROM "fzSession" WHERE "id" = $1 AND "userId" = $2`
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM "fzSession" WHERE "id" = $1 AND "userId" = $2)`
 
-	if err := r.db.Get(&count, query, sessionID, userID); err != nil {
+	if err := r.db.Get(&exists, query, sessionID, userID); err != nil {
 		return false, err
 	}
 
-	return count > 0, nil
+	return exists, nil
 }
