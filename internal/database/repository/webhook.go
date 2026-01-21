@@ -76,3 +76,9 @@ func (r *WebhookRepository) DeleteOld(olderThan time.Duration) error {
 	_, err := r.db.Exec(query, olderThan.String())
 	return err
 }
+
+func (r *WebhookRepository) DeleteBySession(sessionID string) error {
+	query := `DELETE FROM "fzWebhook" WHERE "sessionId" = $1`
+	_, err := r.db.Exec(query, sessionID)
+	return err
+}

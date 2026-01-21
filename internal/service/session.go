@@ -98,6 +98,10 @@ func (s *SessionService) DeleteSession(userID, sessionID string) error {
 		delete(s.clients, key)
 	}
 
+	if s.webhookRepo != nil {
+		_ = s.webhookRepo.DeleteBySession(sessionID)
+	}
+
 	return s.sessionRepo.Delete(sessionID)
 }
 
