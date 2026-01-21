@@ -30,14 +30,13 @@ const docTemplate = `{
                         "AdminKeyAuth": []
                     }
                 ],
-                "description": "List all WhatsApp sessions from all users (admin only)",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Admin"
                 ],
-                "summary": "List all sessions (admin)",
+                "summary": "List all sessions",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -61,14 +60,14 @@ const docTemplate = `{
                         "AdminKeyAuth": []
                     }
                 ],
-                "description": "Get all users or a specific user by ID",
+                "description": "Returns all or single by ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Admin"
                 ],
-                "summary": "List users or get single user",
+                "summary": "List users",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -90,7 +89,6 @@ const docTemplate = `{
                         "AdminKeyAuth": []
                     }
                 ],
-                "description": "Create a new API user",
                 "consumes": [
                     "application/json"
                 ],
@@ -100,7 +98,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Create new user",
+                "summary": "Create user",
                 "parameters": [
                     {
                         "description": "User data",
@@ -135,14 +133,14 @@ const docTemplate = `{
                         "AdminKeyAuth": []
                     }
                 ],
-                "description": "Get all users or a specific user by ID",
+                "description": "Returns all or single by ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Admin"
                 ],
-                "summary": "List users or get single user",
+                "summary": "List users",
                 "parameters": [
                     {
                         "type": "string",
@@ -172,7 +170,6 @@ const docTemplate = `{
                         "AdminKeyAuth": []
                     }
                 ],
-                "description": "Update an existing user",
                 "consumes": [
                     "application/json"
                 ],
@@ -222,7 +219,6 @@ const docTemplate = `{
                         "AdminKeyAuth": []
                     }
                 ],
-                "description": "Delete a user by ID",
                 "produces": [
                     "application/json"
                 ],
@@ -257,7 +253,6 @@ const docTemplate = `{
         },
         "/health": {
             "get": {
-                "description": "Get API health status, uptime and memory stats",
                 "produces": [
                     "application/json"
                 ],
@@ -283,14 +278,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "List all WhatsApp sessions for the authenticated user",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "List all sessions",
+                "summary": "List sessions",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -312,7 +306,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Create a new WhatsApp session",
                 "consumes": [
                     "application/json"
                 ],
@@ -322,7 +315,7 @@ const docTemplate = `{
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Create a new session",
+                "summary": "Create session",
                 "parameters": [
                     {
                         "description": "Session data",
@@ -363,18 +356,17 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get details of a specific WhatsApp session",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Get session details",
+                "summary": "Get session",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -407,7 +399,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Update a WhatsApp session configuration",
                 "consumes": [
                     "application/json"
                 ],
@@ -421,7 +412,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -463,7 +454,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Delete a WhatsApp session",
                 "produces": [
                     "application/json"
                 ],
@@ -474,7 +464,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -509,7 +499,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Reject an incoming WhatsApp call",
                 "consumes": [
                     "application/json"
                 ],
@@ -519,7 +508,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Reject incoming call",
+                "summary": "Reject call",
                 "parameters": [
                     {
                         "description": "Call rejection data",
@@ -561,7 +550,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Archive or unarchive a chat",
+                "description": "archive=true/false",
                 "consumes": [
                     "application/json"
                 ],
@@ -574,6 +563,13 @@ const docTemplate = `{
                 "summary": "Archive chat",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Archive data",
                         "name": "message",
                         "in": "body",
@@ -581,13 +577,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ArchiveChatMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -613,7 +602,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Download an audio and return base64 data",
+                "description": "Returns base64",
                 "consumes": [
                     "application/json"
                 ],
@@ -626,6 +615,13 @@ const docTemplate = `{
                 "summary": "Download audio",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Download data",
                         "name": "message",
                         "in": "body",
@@ -633,13 +629,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DownloadMediaMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -665,7 +654,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Download a document and return base64 data",
+                "description": "Returns base64",
                 "consumes": [
                     "application/json"
                 ],
@@ -678,6 +667,13 @@ const docTemplate = `{
                 "summary": "Download document",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Download data",
                         "name": "message",
                         "in": "body",
@@ -685,13 +681,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DownloadMediaMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -717,7 +706,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Download an image and return base64 data",
+                "description": "Returns base64",
                 "consumes": [
                     "application/json"
                 ],
@@ -730,6 +719,13 @@ const docTemplate = `{
                 "summary": "Download image",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Download data",
                         "name": "message",
                         "in": "body",
@@ -737,13 +733,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DownloadMediaMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -769,7 +758,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Download a sticker and return base64 data",
+                "description": "Returns base64",
                 "consumes": [
                     "application/json"
                 ],
@@ -782,6 +771,13 @@ const docTemplate = `{
                 "summary": "Download sticker",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Download data",
                         "name": "message",
                         "in": "body",
@@ -789,13 +785,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DownloadMediaMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -821,7 +810,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Download a video and return base64 data",
+                "description": "Returns base64",
                 "consumes": [
                     "application/json"
                 ],
@@ -834,6 +823,13 @@ const docTemplate = `{
                 "summary": "Download video",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Download data",
                         "name": "message",
                         "in": "body",
@@ -841,13 +837,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DownloadMediaMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -873,7 +862,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mark messages as read",
                 "consumes": [
                     "application/json"
                 ],
@@ -883,8 +871,15 @@ const docTemplate = `{
                 "tags": [
                     "Chat"
                 ],
-                "summary": "Mark messages as read",
+                "summary": "Mark as read",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Mark read data",
                         "name": "message",
@@ -893,13 +888,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.MarkReadMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -925,7 +913,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send typing/recording indicator to a chat",
+                "description": "state: composing/paused",
                 "consumes": [
                     "application/json"
                 ],
@@ -935,7 +923,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Send chat presence",
+                "summary": "Chat presence",
                 "parameters": [
                     {
                         "description": "Chat presence data",
@@ -988,7 +976,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Connect and start a WhatsApp session. If Immediate is true (default) or not set, returns immediately after initiating connection. If Immediate is false, waits 10 seconds to verify the connection was established successfully before returning - useful for reconnecting sessions that may have been terminated by the phone/device.",
+                "description": "immediate=false waits 10s for verification",
                 "consumes": [
                     "application/json"
                 ],
@@ -998,7 +986,7 @@ const docTemplate = `{
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Connect WhatsApp session",
+                "summary": "Connect session",
                 "parameters": [
                     {
                         "type": "string",
@@ -1008,7 +996,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Connection options: Subscribe (events to subscribe) and Immediate (if false, waits 10s to verify connection)",
+                        "description": "Connection options",
                         "name": "request",
                         "in": "body",
                         "schema": {
@@ -1036,7 +1024,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "Connection failed (when Immediate is false)",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -1051,18 +1039,17 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Disconnect the WhatsApp session",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Disconnect WhatsApp session",
+                "summary": "Disconnect session",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -1091,7 +1078,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Set the announce mode of a group (only admins can send messages)",
+                "description": "Only admins send when true",
                 "consumes": [
                     "application/json"
                 ],
@@ -1101,7 +1088,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Set group announce mode",
+                "summary": "Set announce mode",
                 "parameters": [
                     {
                         "description": "Group announce data",
@@ -1143,7 +1130,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Create a new WhatsApp group",
                 "consumes": [
                     "application/json"
                 ],
@@ -1206,7 +1192,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Set the disappearing messages timer for a group",
+                "description": "duration: 24h/7d/90d/off",
                 "consumes": [
                     "application/json"
                 ],
@@ -1216,7 +1202,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Set group ephemeral timer",
+                "summary": "Set ephemeral",
                 "parameters": [
                     {
                         "description": "Group ephemeral data",
@@ -1258,7 +1244,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get detailed information about a group",
                 "produces": [
                     "application/json"
                 ],
@@ -1305,7 +1290,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get information about a group from an invite link",
                 "consumes": [
                     "application/json"
                 ],
@@ -1315,7 +1299,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Get group invite info",
+                "summary": "Get invite info",
                 "parameters": [
                     {
                         "description": "Group invite info request",
@@ -1357,14 +1341,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get the invite link for a group",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Group"
                 ],
-                "summary": "Get group invite link",
+                "summary": "Get invite link",
                 "parameters": [
                     {
                         "type": "string",
@@ -1404,7 +1387,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Join a group using an invite link/code",
                 "consumes": [
                     "application/json"
                 ],
@@ -1414,7 +1396,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Join group via invite link",
+                "summary": "Join group",
                 "parameters": [
                     {
                         "description": "Group join data",
@@ -1456,7 +1438,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Leave a WhatsApp group",
                 "consumes": [
                     "application/json"
                 ],
@@ -1513,7 +1494,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "List all joined WhatsApp groups",
                 "produces": [
                     "application/json"
                 ],
@@ -1553,7 +1533,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Set the locked mode of a group (only admins can edit group info)",
+                "description": "Only admins edit when true",
                 "consumes": [
                     "application/json"
                 ],
@@ -1563,7 +1543,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Set group locked mode",
+                "summary": "Set locked mode",
                 "parameters": [
                     {
                         "description": "Group locked data",
@@ -1605,7 +1585,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Update the name of a group",
                 "consumes": [
                     "application/json"
                 ],
@@ -1615,7 +1594,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Set group name",
+                "summary": "Set name",
                 "parameters": [
                     {
                         "description": "Group name data",
@@ -1665,7 +1644,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Set the photo of a group",
+                "description": "Base64 image required",
                 "consumes": [
                     "application/json"
                 ],
@@ -1675,7 +1654,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Set group photo",
+                "summary": "Set photo",
                 "parameters": [
                     {
                         "description": "Group photo data",
@@ -1717,7 +1696,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Remove the photo of a group",
                 "consumes": [
                     "application/json"
                 ],
@@ -1727,7 +1705,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Remove group photo",
+                "summary": "Remove photo",
                 "parameters": [
                     {
                         "description": "Group JID",
@@ -1774,7 +1752,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Update the topic/description of a group",
                 "consumes": [
                     "application/json"
                 ],
@@ -1784,7 +1761,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Set group topic",
+                "summary": "Set topic",
                 "parameters": [
                     {
                         "description": "Group topic data",
@@ -1834,7 +1811,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Add, remove, promote or demote group participants",
+                "description": "action: add/remove/promote/demote",
                 "consumes": [
                     "application/json"
                 ],
@@ -1844,7 +1821,7 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Update group participants",
+                "summary": "Update participants",
                 "parameters": [
                     {
                         "description": "Participants data",
@@ -1900,18 +1877,18 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Logout and clear WhatsApp session data",
+                "description": "Clears session credentials",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Logout WhatsApp session",
+                "summary": "Logout session",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -1940,7 +1917,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send an audio file to a phone number",
+                "description": "Base64 data:audio/* required",
                 "consumes": [
                     "application/json"
                 ],
@@ -1953,6 +1930,13 @@ const docTemplate = `{
                 "summary": "Send audio",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Audio data",
                         "name": "message",
                         "in": "body",
@@ -1960,13 +1944,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.AudioMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -1992,7 +1969,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a buttons message to a phone number (experimental)",
+                "description": "Experimental, 1-3 buttons",
                 "consumes": [
                     "application/json"
                 ],
@@ -2002,8 +1979,15 @@ const docTemplate = `{
                 "tags": [
                     "Messages"
                 ],
-                "summary": "Send buttons message",
+                "summary": "Send buttons",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Buttons data",
                         "name": "message",
@@ -2012,13 +1996,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ButtonsMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2044,7 +2021,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a contact card to a phone number",
+                "description": "Requires vCard format",
                 "consumes": [
                     "application/json"
                 ],
@@ -2057,6 +2034,13 @@ const docTemplate = `{
                 "summary": "Send contact",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Contact data",
                         "name": "message",
                         "in": "body",
@@ -2064,13 +2048,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ContactMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2096,7 +2073,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Delete a sent message",
+                "description": "Revokes own messages",
                 "consumes": [
                     "application/json"
                 ],
@@ -2109,6 +2086,13 @@ const docTemplate = `{
                 "summary": "Delete message",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Delete data",
                         "name": "message",
                         "in": "body",
@@ -2116,13 +2100,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DeleteMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2148,7 +2125,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a document to a phone number",
+                "description": "Base64 with filename required",
                 "consumes": [
                     "application/json"
                 ],
@@ -2161,6 +2138,13 @@ const docTemplate = `{
                 "summary": "Send document",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Document data",
                         "name": "message",
                         "in": "body",
@@ -2168,13 +2152,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DocumentMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2200,7 +2177,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Edit a sent message",
                 "consumes": [
                     "application/json"
                 ],
@@ -2213,6 +2189,13 @@ const docTemplate = `{
                 "summary": "Edit message",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Edit data",
                         "name": "message",
                         "in": "body",
@@ -2220,13 +2203,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.EditMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2252,7 +2228,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send an image to a phone number",
+                "description": "Base64 data:image/* required",
                 "consumes": [
                     "application/json"
                 ],
@@ -2265,6 +2241,13 @@ const docTemplate = `{
                 "summary": "Send image",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Image data",
                         "name": "message",
                         "in": "body",
@@ -2272,13 +2255,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ImageMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2304,7 +2280,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a list message to a phone number",
                 "consumes": [
                     "application/json"
                 ],
@@ -2314,8 +2289,15 @@ const docTemplate = `{
                 "tags": [
                     "Messages"
                 ],
-                "summary": "Send list message",
+                "summary": "Send list",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "List data",
                         "name": "message",
@@ -2324,13 +2306,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ListMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2356,7 +2331,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a location to a phone number",
                 "consumes": [
                     "application/json"
                 ],
@@ -2369,6 +2343,13 @@ const docTemplate = `{
                 "summary": "Send location",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Location data",
                         "name": "message",
                         "in": "body",
@@ -2376,13 +2357,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.LocationMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2408,7 +2382,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a poll to a phone number or group",
+                "description": "Min 2 options required",
                 "consumes": [
                     "application/json"
                 ],
@@ -2421,6 +2395,13 @@ const docTemplate = `{
                 "summary": "Send poll",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Poll data",
                         "name": "message",
                         "in": "body",
@@ -2428,13 +2409,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.PollMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2460,7 +2434,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a reaction to a message",
                 "consumes": [
                     "application/json"
                 ],
@@ -2473,6 +2446,13 @@ const docTemplate = `{
                 "summary": "React to message",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Reaction data",
                         "name": "message",
                         "in": "body",
@@ -2480,13 +2460,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.ReactionMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2512,7 +2485,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a sticker to a phone number",
+                "description": "WebP format required",
                 "consumes": [
                     "application/json"
                 ],
@@ -2525,6 +2498,13 @@ const docTemplate = `{
                 "summary": "Send sticker",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Sticker data",
                         "name": "message",
                         "in": "body",
@@ -2532,13 +2512,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.StickerMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2564,7 +2537,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a text message to a phone number",
                 "consumes": [
                     "application/json"
                 ],
@@ -2574,8 +2546,15 @@ const docTemplate = `{
                 "tags": [
                     "Messages"
                 ],
-                "summary": "Send text message",
+                "summary": "Send text",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Message data",
                         "name": "message",
@@ -2584,13 +2563,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.TextMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2616,7 +2588,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a video to a phone number",
+                "description": "Base64 data:video/* required",
                 "consumes": [
                     "application/json"
                 ],
@@ -2629,6 +2601,13 @@ const docTemplate = `{
                 "summary": "Send video",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Video data",
                         "name": "message",
                         "in": "body",
@@ -2636,13 +2615,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.VideoMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -2668,7 +2640,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Create a new newsletter/channel",
                 "consumes": [
                     "application/json"
                 ],
@@ -2720,7 +2691,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Subscribe to a newsletter/channel",
                 "consumes": [
                     "application/json"
                 ],
@@ -2730,7 +2700,7 @@ const docTemplate = `{
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Follow newsletter",
+                "summary": "Follow",
                 "parameters": [
                     {
                         "description": "Newsletter JID",
@@ -2772,14 +2742,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get detailed information about a newsletter by JID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Get newsletter info",
+                "summary": "Get info",
                 "parameters": [
                     {
                         "type": "string",
@@ -2819,14 +2788,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get newsletter information using an invite link/code",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Get newsletter info via invite",
+                "summary": "Get info by invite",
                 "parameters": [
                     {
                         "type": "string",
@@ -2866,14 +2834,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get list of subscribed WhatsApp channels/newsletters",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "List subscribed newsletters",
+                "summary": "List newsletters",
                 "parameters": [
                     {
                         "type": "string",
@@ -2906,7 +2873,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Subscribe to receive live updates from a newsletter",
+                "description": "Returns subscription duration",
                 "consumes": [
                     "application/json"
                 ],
@@ -2916,7 +2883,7 @@ const docTemplate = `{
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Subscribe to live updates",
+                "summary": "Live updates",
                 "parameters": [
                     {
                         "description": "Newsletter JID",
@@ -2958,7 +2925,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mark newsletter messages as viewed",
                 "consumes": [
                     "application/json"
                 ],
@@ -2968,7 +2934,7 @@ const docTemplate = `{
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Mark messages as viewed",
+                "summary": "Mark viewed",
                 "parameters": [
                     {
                         "description": "Mark viewed request",
@@ -3010,14 +2976,14 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get messages from a newsletter",
+                "description": "count/before for pagination",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Get newsletter messages",
+                "summary": "Get messages",
                 "parameters": [
                     {
                         "type": "string",
@@ -3070,7 +3036,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Toggle mute status for a newsletter",
+                "description": "mute=true/false",
                 "consumes": [
                     "application/json"
                 ],
@@ -3080,7 +3046,7 @@ const docTemplate = `{
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Mute/unmute newsletter",
+                "summary": "Mute newsletter",
                 "parameters": [
                     {
                         "description": "Mute request",
@@ -3122,7 +3088,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send a reaction to a newsletter message",
                 "consumes": [
                     "application/json"
                 ],
@@ -3132,7 +3097,7 @@ const docTemplate = `{
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Send reaction to message",
+                "summary": "Send reaction",
                 "parameters": [
                     {
                         "description": "Reaction request",
@@ -3174,7 +3139,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Unsubscribe from a newsletter/channel",
                 "consumes": [
                     "application/json"
                 ],
@@ -3184,7 +3148,7 @@ const docTemplate = `{
                 "tags": [
                     "Newsletter"
                 ],
-                "summary": "Unfollow newsletter",
+                "summary": "Unfollow",
                 "parameters": [
                     {
                         "description": "Newsletter JID",
@@ -3226,7 +3190,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get pairing code for phone number authentication",
+                "description": "Returns 8-digit linking code",
                 "consumes": [
                     "application/json"
                 ],
@@ -3236,11 +3200,11 @@ const docTemplate = `{
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Pair with phone number",
+                "summary": "Pair phone",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -3278,7 +3242,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get QR code for WhatsApp authentication",
                 "produces": [
                     "application/json"
                 ],
@@ -3289,7 +3252,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -3318,18 +3281,17 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get the WhatsApp session status",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Sessions"
                 ],
-                "summary": "Get session status",
+                "summary": "Get status",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Session name",
+                        "description": "Session ID",
                         "name": "sessionId",
                         "in": "path",
                         "required": true
@@ -3358,7 +3320,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Set WhatsApp status/story text",
                 "consumes": [
                     "application/json"
                 ],
@@ -3368,8 +3329,15 @@ const docTemplate = `{
                 "tags": [
                     "Status"
                 ],
-                "summary": "Set status text",
+                "summary": "Set status",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Session ID",
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Status text data",
                         "name": "message",
@@ -3378,13 +3346,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.StatusTextMessage"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Session ID",
-                        "name": "sessionId",
-                        "in": "path",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -3410,7 +3371,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get profile picture URL for a phone number",
+                "description": "preview=true for thumbnail",
                 "consumes": [
                     "application/json"
                 ],
@@ -3420,7 +3381,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Get user avatar",
+                "summary": "Get avatar",
                 "parameters": [
                     {
                         "description": "Phone and preview option",
@@ -3470,7 +3431,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Check if phone numbers are registered on WhatsApp",
+                "description": "Verifies WhatsApp registration",
                 "consumes": [
                     "application/json"
                 ],
@@ -3480,7 +3441,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Check if users are on WhatsApp",
+                "summary": "Check users",
                 "parameters": [
                     {
                         "description": "Phone numbers",
@@ -3530,7 +3491,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get all contacts from the connected WhatsApp account",
                 "produces": [
                     "application/json"
                 ],
@@ -3570,14 +3530,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get the Local ID (LID) for a phone number",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "User"
                 ],
-                "summary": "Get user LID",
+                "summary": "Get LID",
                 "parameters": [
                     {
                         "type": "string",
@@ -3617,7 +3576,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get WhatsApp user info by phone numbers",
                 "consumes": [
                     "application/json"
                 ],
@@ -3677,14 +3635,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get list of subscribed WhatsApp channels/newsletters",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "User"
                 ],
-                "summary": "Get subscribed newsletters",
+                "summary": "Get newsletters",
                 "parameters": [
                     {
                         "type": "string",
@@ -3717,7 +3674,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Send online/offline presence status",
+                "description": "available/unavailable",
                 "consumes": [
                     "application/json"
                 ],
@@ -3774,14 +3731,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get current webhook URL and subscribed events for the session",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Webhook"
                 ],
-                "summary": "Get webhook configuration",
+                "summary": "Get webhook",
                 "parameters": [
                     {
                         "type": "string",
@@ -3812,7 +3768,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Update webhook URL, events and active status for the session",
+                "description": "active=false to disable",
                 "consumes": [
                     "application/json"
                 ],
@@ -3822,7 +3778,7 @@ const docTemplate = `{
                 "tags": [
                     "Webhook"
                 ],
-                "summary": "Update webhook configuration",
+                "summary": "Update webhook",
                 "parameters": [
                     {
                         "type": "string",
@@ -3876,7 +3832,6 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Configure webhook URL and events to subscribe for the session",
                 "consumes": [
                     "application/json"
                 ],
@@ -3886,7 +3841,7 @@ const docTemplate = `{
                 "tags": [
                     "Webhook"
                 ],
-                "summary": "Set webhook configuration",
+                "summary": "Set webhook",
                 "parameters": [
                     {
                         "type": "string",
@@ -3926,14 +3881,13 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Remove webhook URL and unsubscribe from all events for the session",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Webhook"
                 ],
-                "summary": "Delete webhook configuration",
+                "summary": "Delete webhook",
                 "parameters": [
                     {
                         "type": "string",

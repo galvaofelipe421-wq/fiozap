@@ -18,7 +18,6 @@ func NewHealthHandler() *HealthHandler {
 
 // GetHealth godoc
 // @Summary Health check
-// @Description Get API health status, uptime and memory stats
 // @Tags Health
 // @Produce json
 // @Success 200 {object} map[string]interface{}

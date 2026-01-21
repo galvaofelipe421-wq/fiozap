@@ -20,7 +20,6 @@ func NewGroupHandler(groupService *service.GroupService) *GroupHandler {
 
 // Create godoc
 // @Summary Create group
-// @Description Create a new WhatsApp group
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -63,7 +62,6 @@ func (h *GroupHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 // List godoc
 // @Summary List groups
-// @Description List all joined WhatsApp groups
 // @Tags Group
 // @Produce json
 // @Success 200 {object} model.Response
@@ -90,7 +88,6 @@ func (h *GroupHandler) List(w http.ResponseWriter, r *http.Request) {
 
 // GetInfo godoc
 // @Summary Get group info
-// @Description Get detailed information about a group
 // @Tags Group
 // @Produce json
 // @Param jid query string true "Group JID"
@@ -123,8 +120,7 @@ func (h *GroupHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetInviteLink godoc
-// @Summary Get group invite link
-// @Description Get the invite link for a group
+// @Summary Get invite link
 // @Tags Group
 // @Produce json
 // @Param jid query string true "Group JID"
@@ -158,7 +154,6 @@ func (h *GroupHandler) GetInviteLink(w http.ResponseWriter, r *http.Request) {
 
 // Leave godoc
 // @Summary Leave group
-// @Description Leave a WhatsApp group
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -199,8 +194,8 @@ func (h *GroupHandler) Leave(w http.ResponseWriter, r *http.Request) {
 }
 
 // UpdateParticipants godoc
-// @Summary Update group participants
-// @Description Add, remove, promote or demote group participants
+// @Summary Update participants
+// @Description action: add/remove/promote/demote
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -252,8 +247,7 @@ func (h *GroupHandler) UpdateParticipants(w http.ResponseWriter, r *http.Request
 }
 
 // SetName godoc
-// @Summary Set group name
-// @Description Update the name of a group
+// @Summary Set name
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -295,8 +289,7 @@ func (h *GroupHandler) SetName(w http.ResponseWriter, r *http.Request) {
 }
 
 // SetTopic godoc
-// @Summary Set group topic
-// @Description Update the topic/description of a group
+// @Summary Set topic
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -338,8 +331,8 @@ func (h *GroupHandler) SetTopic(w http.ResponseWriter, r *http.Request) {
 }
 
 // SetPhoto godoc
-// @Summary Set group photo
-// @Description Set the photo of a group
+// @Summary Set photo
+// @Description Base64 image required
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -406,8 +399,7 @@ func (h *GroupHandler) SetPhoto(w http.ResponseWriter, r *http.Request) {
 }
 
 // RemovePhoto godoc
-// @Summary Remove group photo
-// @Description Remove the photo of a group
+// @Summary Remove photo
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -448,8 +440,8 @@ func (h *GroupHandler) RemovePhoto(w http.ResponseWriter, r *http.Request) {
 }
 
 // SetAnnounce godoc
-// @Summary Set group announce mode
-// @Description Set the announce mode of a group (only admins can send messages)
+// @Summary Set announce mode
+// @Description Only admins send when true
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -488,8 +480,8 @@ func (h *GroupHandler) SetAnnounce(w http.ResponseWriter, r *http.Request) {
 }
 
 // SetLocked godoc
-// @Summary Set group locked mode
-// @Description Set the locked mode of a group (only admins can edit group info)
+// @Summary Set locked mode
+// @Description Only admins edit when true
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -528,8 +520,8 @@ func (h *GroupHandler) SetLocked(w http.ResponseWriter, r *http.Request) {
 }
 
 // SetEphemeral godoc
-// @Summary Set group ephemeral timer
-// @Description Set the disappearing messages timer for a group
+// @Summary Set ephemeral
+// @Description duration: 24h/7d/90d/off
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -573,8 +565,7 @@ func (h *GroupHandler) SetEphemeral(w http.ResponseWriter, r *http.Request) {
 }
 
 // Join godoc
-// @Summary Join group via invite link
-// @Description Join a group using an invite link/code
+// @Summary Join group
 // @Tags Group
 // @Accept json
 // @Produce json
@@ -613,8 +604,7 @@ func (h *GroupHandler) Join(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetInviteInfo godoc
-// @Summary Get group invite info
-// @Description Get information about a group from an invite link
+// @Summary Get invite info
 // @Tags Group
 // @Accept json
 // @Produce json

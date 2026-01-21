@@ -20,7 +20,6 @@ func NewUserHandler(userService *service.UserService) *UserHandler {
 
 // GetInfo godoc
 // @Summary Get user info
-// @Description Get WhatsApp user info by phone numbers
 // @Tags User
 // @Accept json
 // @Produce json
@@ -61,8 +60,8 @@ func (h *UserHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // CheckUser godoc
-// @Summary Check if users are on WhatsApp
-// @Description Check if phone numbers are registered on WhatsApp
+// @Summary Check users
+// @Description Verifies WhatsApp registration
 // @Tags User
 // @Accept json
 // @Produce json
@@ -103,8 +102,8 @@ func (h *UserHandler) CheckUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetAvatar godoc
-// @Summary Get user avatar
-// @Description Get profile picture URL for a phone number
+// @Summary Get avatar
+// @Description preview=true for thumbnail
 // @Tags User
 // @Accept json
 // @Produce json
@@ -147,7 +146,6 @@ func (h *UserHandler) GetAvatar(w http.ResponseWriter, r *http.Request) {
 
 // GetContacts godoc
 // @Summary Get contacts
-// @Description Get all contacts from the connected WhatsApp account
 // @Tags User
 // @Produce json
 // @Success 200 {object} model.Response
@@ -174,7 +172,7 @@ func (h *UserHandler) GetContacts(w http.ResponseWriter, r *http.Request) {
 
 // SendPresence godoc
 // @Summary Send presence
-// @Description Send online/offline presence status
+// @Description available/unavailable
 // @Tags User
 // @Accept json
 // @Produce json
@@ -210,12 +208,12 @@ func (h *UserHandler) SendPresence(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Presence sent"})
+	model.RespondOK(w, nil)
 }
 
 // ChatPresence godoc
-// @Summary Send chat presence
-// @Description Send typing/recording indicator to a chat
+// @Summary Chat presence
+// @Description state: composing/paused
 // @Tags User
 // @Accept json
 // @Produce json
@@ -254,12 +252,11 @@ func (h *UserHandler) ChatPresence(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Chat presence sent"})
+	model.RespondOK(w, nil)
 }
 
 // RejectCall godoc
-// @Summary Reject incoming call
-// @Description Reject an incoming WhatsApp call
+// @Summary Reject call
 // @Tags User
 // @Accept json
 // @Produce json
@@ -299,12 +296,11 @@ func (h *UserHandler) RejectCall(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Call rejected"})
+	model.RespondOK(w, nil)
 }
 
 // GetNewsletters godoc
-// @Summary Get subscribed newsletters
-// @Description Get list of subscribed WhatsApp channels/newsletters
+// @Summary Get newsletters
 // @Tags User
 // @Produce json
 // @Success 200 {object} model.Response
@@ -330,8 +326,7 @@ func (h *UserHandler) GetNewsletters(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetUserLID godoc
-// @Summary Get user LID
-// @Description Get the Local ID (LID) for a phone number
+// @Summary Get LID
 // @Tags User
 // @Produce json
 // @Param phone query string true "Phone number"

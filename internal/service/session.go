@@ -106,7 +106,7 @@ func (s *SessionService) SessionBelongsToUser(sessionID, userID string) (bool, e
 }
 
 // Connection operations
-func (s *SessionService) Connect(ctx context.Context, userID string, session *model.Session, immediate bool) (map[string]interface{}, error) {
+func (s *SessionService) Connect(ctx context.Context, userID string, session *model.Session, immediate bool) (*model.Session, error) {
 	s.mu.Lock()
 
 	key := s.clientKey(userID, session.ID)
@@ -170,13 +170,7 @@ func (s *SessionService) Connect(ctx context.Context, userID string, session *mo
 		}
 	}
 
-	return map[string]interface{}{
-		"name":    session.Name,
-		"webhook": session.Webhook,
-		"jid":     session.JID,
-		"events":  session.Events,
-		"details": "Connected!",
-	}, nil
+	return s.sessionRepo.GetByID(session.ID)
 }
 
 func (s *SessionService) handleEvent(userID, sessionID, eventType string, data interface{}) {

@@ -19,8 +19,7 @@ func NewSessionHandler(sessionService *service.SessionService) *SessionHandler {
 }
 
 // ListSessions godoc
-// @Summary List all sessions
-// @Description List all WhatsApp sessions for the authenticated user
+// @Summary List sessions
 // @Tags Sessions
 // @Produce json
 // @Success 200 {object} model.Response
@@ -44,8 +43,7 @@ func (h *SessionHandler) ListSessions(w http.ResponseWriter, r *http.Request) {
 }
 
 // CreateSession godoc
-// @Summary Create a new session
-// @Description Create a new WhatsApp session
+// @Summary Create session
 // @Tags Sessions
 // @Accept json
 // @Produce json
@@ -83,11 +81,10 @@ func (h *SessionHandler) CreateSession(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetSession godoc
-// @Summary Get session details
-// @Description Get details of a specific WhatsApp session
+// @Summary Get session
 // @Tags Sessions
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
 // @Failure 404 {object} model.Response
@@ -105,11 +102,10 @@ func (h *SessionHandler) GetSession(w http.ResponseWriter, r *http.Request) {
 
 // UpdateSession godoc
 // @Summary Update session
-// @Description Update a WhatsApp session configuration
 // @Tags Sessions
 // @Accept json
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Param request body model.SessionUpdateRequest true "Session data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
@@ -140,10 +136,9 @@ func (h *SessionHandler) UpdateSession(w http.ResponseWriter, r *http.Request) {
 
 // DeleteSession godoc
 // @Summary Delete session
-// @Description Delete a WhatsApp session
 // @Tags Sessions
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
 // @Failure 404 {object} model.Response
@@ -162,21 +157,21 @@ func (h *SessionHandler) DeleteSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Session deleted"})
+	model.RespondOK(w, nil)
 }
 
 // Connect godoc
-// @Summary Connect WhatsApp session
-// @Description Connect and start a WhatsApp session. If Immediate is true (default) or not set, returns immediately after initiating connection. If Immediate is false, waits 10 seconds to verify the connection was established successfully before returning - useful for reconnecting sessions that may have been terminated by the phone/device.
+// @Summary Connect session
+// @Description immediate=false waits 10s for verification
 // @Tags Sessions
 // @Accept json
 // @Produce json
 // @Param sessionId path string true "Session ID"
-// @Param request body model.SessionConnectRequest false "Connection options: Subscribe (events to subscribe) and Immediate (if false, waits 10s to verify connection)"
+// @Param request body model.SessionConnectRequest false "Connection options"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
 // @Failure 401 {object} model.Response
-// @Failure 500 {object} model.Response "Connection failed (when Immediate is false)"
+// @Failure 500 {object} model.Response
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/connect [post]
 func (h *SessionHandler) Connect(w http.ResponseWriter, r *http.Request) {
@@ -210,11 +205,10 @@ func (h *SessionHandler) Connect(w http.ResponseWriter, r *http.Request) {
 }
 
 // Disconnect godoc
-// @Summary Disconnect WhatsApp session
-// @Description Disconnect the WhatsApp session
+// @Summary Disconnect session
 // @Tags Sessions
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
 // @Security ApiKeyAuth
@@ -232,15 +226,15 @@ func (h *SessionHandler) Disconnect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Disconnected"})
+	model.RespondOK(w, nil)
 }
 
 // Logout godoc
-// @Summary Logout WhatsApp session
-// @Description Logout and clear WhatsApp session data
+// @Summary Logout session
+// @Description Clears session credentials
 // @Tags Sessions
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
 // @Security ApiKeyAuth
@@ -258,15 +252,14 @@ func (h *SessionHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "Logged out"})
+	model.RespondOK(w, nil)
 }
 
 // GetStatus godoc
-// @Summary Get session status
-// @Description Get the WhatsApp session status
+// @Summary Get status
 // @Tags Sessions
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
 // @Security ApiKeyAuth
@@ -285,10 +278,9 @@ func (h *SessionHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
 
 // GetQR godoc
 // @Summary Get QR code
-// @Description Get QR code for WhatsApp authentication
 // @Tags Sessions
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Success 200 {object} model.Response
 // @Failure 401 {object} model.Response
 // @Security ApiKeyAuth
@@ -307,16 +299,16 @@ func (h *SessionHandler) GetQR(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"qrcode": qr})
+	model.RespondOK(w, map[string]string{"qrCode": qr})
 }
 
 // PairPhone godoc
-// @Summary Pair with phone number
-// @Description Get pairing code for phone number authentication
+// @Summary Pair phone
+// @Description Returns 8-digit linking code
 // @Tags Sessions
 // @Accept json
 // @Produce json
-// @Param sessionId path string true "Session name"
+// @Param sessionId path string true "Session ID"
 // @Param request body model.PairPhoneRequest true "Phone number"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
@@ -347,12 +339,11 @@ func (h *SessionHandler) PairPhone(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"linking_code": code})
+	model.RespondOK(w, map[string]string{"linkingCode": code})
 }
 
 // AdminListAllSessions godoc
-// @Summary List all sessions (admin)
-// @Description List all WhatsApp sessions from all users (admin only)
+// @Summary List all sessions
 // @Tags Admin
 // @Produce json
 // @Success 200 {object} model.Response

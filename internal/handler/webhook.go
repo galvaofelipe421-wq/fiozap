@@ -36,8 +36,7 @@ func NewWebhookHandler(sessionRepo *repository.SessionRepository) *WebhookHandle
 }
 
 // Get godoc
-// @Summary Get webhook configuration
-// @Description Get current webhook URL and subscribed events for the session
+// @Summary Get webhook
 // @Tags Webhook
 // @Produce json
 // @Param sessionId path string true "Session name"
@@ -64,8 +63,7 @@ func (h *WebhookHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 // Set godoc
-// @Summary Set webhook configuration
-// @Description Configure webhook URL and events to subscribe for the session
+// @Summary Set webhook
 // @Tags Webhook
 // @Accept json
 // @Produce json
@@ -109,8 +107,8 @@ func (h *WebhookHandler) Set(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update godoc
-// @Summary Update webhook configuration
-// @Description Update webhook URL, events and active status for the session
+// @Summary Update webhook
+// @Description active=false to disable
 // @Tags Webhook
 // @Accept json
 // @Produce json
@@ -166,8 +164,7 @@ func (h *WebhookHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete godoc
-// @Summary Delete webhook configuration
-// @Description Remove webhook URL and unsubscribe from all events for the session
+// @Summary Delete webhook
 // @Tags Webhook
 // @Produce json
 // @Param sessionId path string true "Session name"

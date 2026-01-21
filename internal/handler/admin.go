@@ -20,8 +20,8 @@ func NewAdminHandler(userRepo *repository.UserRepository) *AdminHandler {
 }
 
 // ListUsers godoc
-// @Summary List users or get single user
-// @Description Get all users or a specific user by ID
+// @Summary List users
+// @Description Returns all or single by ID
 // @Tags Admin
 // @Produce json
 // @Param id path string false "User ID"
@@ -53,8 +53,7 @@ func (h *AdminHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 // AddUser godoc
-// @Summary Create new user
-// @Description Create a new API user
+// @Summary Create user
 // @Tags Admin
 // @Accept json
 // @Produce json
@@ -91,7 +90,6 @@ func (h *AdminHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 
 // EditUser godoc
 // @Summary Update user
-// @Description Update an existing user
 // @Tags Admin
 // @Accept json
 // @Produce json
@@ -121,7 +119,6 @@ func (h *AdminHandler) EditUser(w http.ResponseWriter, r *http.Request) {
 
 // DeleteUser godoc
 // @Summary Delete user
-// @Description Delete a user by ID
 // @Tags Admin
 // @Produce json
 // @Param id path string true "User ID"
@@ -137,5 +134,5 @@ func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	model.RespondOK(w, map[string]string{"details": "User deleted successfully"})
+	model.RespondOK(w, nil)
 }

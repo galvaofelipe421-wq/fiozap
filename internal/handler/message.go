@@ -19,15 +19,14 @@ func NewMessageHandler(messageService *service.MessageService) *MessageHandler {
 }
 
 // SendText godoc
-// @Summary Send text message
-// @Description Send a text message to a phone number
+// @Summary Send text
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.TextMessage true "Message data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/text [post]
 func (h *MessageHandler) SendText(w http.ResponseWriter, r *http.Request) {
@@ -65,14 +64,14 @@ func (h *MessageHandler) SendText(w http.ResponseWriter, r *http.Request) {
 
 // SendImage godoc
 // @Summary Send image
-// @Description Send an image to a phone number
+// @Description Base64 data:image/* required
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.ImageMessage true "Image data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/image [post]
 func (h *MessageHandler) SendImage(w http.ResponseWriter, r *http.Request) {
@@ -110,14 +109,14 @@ func (h *MessageHandler) SendImage(w http.ResponseWriter, r *http.Request) {
 
 // SendAudio godoc
 // @Summary Send audio
-// @Description Send an audio file to a phone number
+// @Description Base64 data:audio/* required
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.AudioMessage true "Audio data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/audio [post]
 func (h *MessageHandler) SendAudio(w http.ResponseWriter, r *http.Request) {
@@ -155,14 +154,14 @@ func (h *MessageHandler) SendAudio(w http.ResponseWriter, r *http.Request) {
 
 // SendVideo godoc
 // @Summary Send video
-// @Description Send a video to a phone number
+// @Description Base64 data:video/* required
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.VideoMessage true "Video data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/video [post]
 func (h *MessageHandler) SendVideo(w http.ResponseWriter, r *http.Request) {
@@ -200,14 +199,14 @@ func (h *MessageHandler) SendVideo(w http.ResponseWriter, r *http.Request) {
 
 // SendDocument godoc
 // @Summary Send document
-// @Description Send a document to a phone number
+// @Description Base64 with filename required
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.DocumentMessage true "Document data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/document [post]
 func (h *MessageHandler) SendDocument(w http.ResponseWriter, r *http.Request) {
@@ -250,14 +249,13 @@ func (h *MessageHandler) SendDocument(w http.ResponseWriter, r *http.Request) {
 
 // SendLocation godoc
 // @Summary Send location
-// @Description Send a location to a phone number
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.LocationMessage true "Location data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/location [post]
 func (h *MessageHandler) SendLocation(w http.ResponseWriter, r *http.Request) {
@@ -290,14 +288,14 @@ func (h *MessageHandler) SendLocation(w http.ResponseWriter, r *http.Request) {
 
 // SendContact godoc
 // @Summary Send contact
-// @Description Send a contact card to a phone number
+// @Description Requires vCard format
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.ContactMessage true "Contact data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/contact [post]
 func (h *MessageHandler) SendContact(w http.ResponseWriter, r *http.Request) {
@@ -330,14 +328,13 @@ func (h *MessageHandler) SendContact(w http.ResponseWriter, r *http.Request) {
 
 // React godoc
 // @Summary React to message
-// @Description Send a reaction to a message
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.ReactionMessage true "Reaction data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/reaction [post]
 func (h *MessageHandler) React(w http.ResponseWriter, r *http.Request) {
@@ -375,14 +372,14 @@ func (h *MessageHandler) React(w http.ResponseWriter, r *http.Request) {
 
 // Delete godoc
 // @Summary Delete message
-// @Description Delete a sent message
+// @Description Revokes own messages
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.DeleteMessage true "Delete data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/delete [post]
 func (h *MessageHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -420,14 +417,14 @@ func (h *MessageHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 // SendSticker godoc
 // @Summary Send sticker
-// @Description Send a sticker to a phone number
+// @Description WebP format required
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.StickerMessage true "Sticker data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/sticker [post]
 func (h *MessageHandler) SendSticker(w http.ResponseWriter, r *http.Request) {
@@ -465,14 +462,14 @@ func (h *MessageHandler) SendSticker(w http.ResponseWriter, r *http.Request) {
 
 // SendPoll godoc
 // @Summary Send poll
-// @Description Send a poll to a phone number or group
+// @Description Min 2 options required
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.PollMessage true "Poll data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/poll [post]
 func (h *MessageHandler) SendPoll(w http.ResponseWriter, r *http.Request) {
@@ -514,15 +511,14 @@ func (h *MessageHandler) SendPoll(w http.ResponseWriter, r *http.Request) {
 }
 
 // SendList godoc
-// @Summary Send list message
-// @Description Send a list message to a phone number
+// @Summary Send list
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.ListMessage true "List data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/list [post]
 func (h *MessageHandler) SendList(w http.ResponseWriter, r *http.Request) {
@@ -559,15 +555,15 @@ func (h *MessageHandler) SendList(w http.ResponseWriter, r *http.Request) {
 }
 
 // SendButtons godoc
-// @Summary Send buttons message
-// @Description Send a buttons message to a phone number (experimental)
+// @Summary Send buttons
+// @Description Experimental, 1-3 buttons
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.ButtonsMessage true "Buttons data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/buttons [post]
 func (h *MessageHandler) SendButtons(w http.ResponseWriter, r *http.Request) {
@@ -610,14 +606,13 @@ func (h *MessageHandler) SendButtons(w http.ResponseWriter, r *http.Request) {
 
 // Edit godoc
 // @Summary Edit message
-// @Description Edit a sent message
 // @Tags Messages
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.EditMessage true "Edit data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/messages/edit [post]
 func (h *MessageHandler) Edit(w http.ResponseWriter, r *http.Request) {
@@ -659,15 +654,14 @@ func (h *MessageHandler) Edit(w http.ResponseWriter, r *http.Request) {
 }
 
 // MarkRead godoc
-// @Summary Mark messages as read
-// @Description Mark messages as read
+// @Summary Mark as read
 // @Tags Chat
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.MarkReadMessage true "Mark read data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/markread [post]
 func (h *MessageHandler) MarkRead(w http.ResponseWriter, r *http.Request) {
@@ -704,15 +698,14 @@ func (h *MessageHandler) MarkRead(w http.ResponseWriter, r *http.Request) {
 }
 
 // SetStatusText godoc
-// @Summary Set status text
-// @Description Set WhatsApp status/story text
+// @Summary Set status
 // @Tags Status
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.StatusTextMessage true "Status text data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/status/text [post]
 func (h *MessageHandler) SetStatusText(w http.ResponseWriter, r *http.Request) {
@@ -745,14 +738,14 @@ func (h *MessageHandler) SetStatusText(w http.ResponseWriter, r *http.Request) {
 
 // DownloadImage godoc
 // @Summary Download image
-// @Description Download an image and return base64 data
+// @Description Returns base64
 // @Tags Chat
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadimage [post]
 func (h *MessageHandler) DownloadImage(w http.ResponseWriter, r *http.Request) {
@@ -780,14 +773,14 @@ func (h *MessageHandler) DownloadImage(w http.ResponseWriter, r *http.Request) {
 
 // DownloadVideo godoc
 // @Summary Download video
-// @Description Download a video and return base64 data
+// @Description Returns base64
 // @Tags Chat
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadvideo [post]
 func (h *MessageHandler) DownloadVideo(w http.ResponseWriter, r *http.Request) {
@@ -815,14 +808,14 @@ func (h *MessageHandler) DownloadVideo(w http.ResponseWriter, r *http.Request) {
 
 // DownloadAudio godoc
 // @Summary Download audio
-// @Description Download an audio and return base64 data
+// @Description Returns base64
 // @Tags Chat
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadaudio [post]
 func (h *MessageHandler) DownloadAudio(w http.ResponseWriter, r *http.Request) {
@@ -850,14 +843,14 @@ func (h *MessageHandler) DownloadAudio(w http.ResponseWriter, r *http.Request) {
 
 // DownloadDocument godoc
 // @Summary Download document
-// @Description Download a document and return base64 data
+// @Description Returns base64
 // @Tags Chat
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloaddocument [post]
 func (h *MessageHandler) DownloadDocument(w http.ResponseWriter, r *http.Request) {
@@ -885,14 +878,14 @@ func (h *MessageHandler) DownloadDocument(w http.ResponseWriter, r *http.Request
 
 // DownloadSticker godoc
 // @Summary Download sticker
-// @Description Download a sticker and return base64 data
+// @Description Returns base64
 // @Tags Chat
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.DownloadMediaMessage true "Download data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/downloadsticker [post]
 func (h *MessageHandler) DownloadSticker(w http.ResponseWriter, r *http.Request) {
@@ -920,14 +913,14 @@ func (h *MessageHandler) DownloadSticker(w http.ResponseWriter, r *http.Request)
 
 // ArchiveChat godoc
 // @Summary Archive chat
-// @Description Archive or unarchive a chat
+// @Description archive=true/false
 // @Tags Chat
 // @Accept json
 // @Produce json
+// @Param sessionId path string true "Session ID"
 // @Param message body model.ArchiveChatMessage true "Archive data"
 // @Success 200 {object} model.Response
 // @Failure 400 {object} model.Response
-// @Param sessionId path string true "Session ID"
 // @Security ApiKeyAuth
 // @Router /sessions/{sessionId}/chat/archive [post]
 func (h *MessageHandler) ArchiveChat(w http.ResponseWriter, r *http.Request) {

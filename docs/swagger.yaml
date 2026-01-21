@@ -450,7 +450,6 @@ info:
 paths:
   /admin/sessions:
     get:
-      description: List all WhatsApp sessions from all users (admin only)
       produces:
       - application/json
       responses:
@@ -464,12 +463,12 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - AdminKeyAuth: []
-      summary: List all sessions (admin)
+      summary: List all sessions
       tags:
       - Admin
   /admin/users:
     get:
-      description: Get all users or a specific user by ID
+      description: Returns all or single by ID
       produces:
       - application/json
       responses:
@@ -483,13 +482,12 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - AdminKeyAuth: []
-      summary: List users or get single user
+      summary: List users
       tags:
       - Admin
     post:
       consumes:
       - application/json
-      description: Create a new API user
       parameters:
       - description: User data
         in: body
@@ -510,12 +508,11 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - AdminKeyAuth: []
-      summary: Create new user
+      summary: Create user
       tags:
       - Admin
   /admin/users/{id}:
     delete:
-      description: Delete a user by ID
       parameters:
       - description: User ID
         in: path
@@ -539,7 +536,7 @@ paths:
       tags:
       - Admin
     get:
-      description: Get all users or a specific user by ID
+      description: Returns all or single by ID
       parameters:
       - description: User ID
         in: path
@@ -558,13 +555,12 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - AdminKeyAuth: []
-      summary: List users or get single user
+      summary: List users
       tags:
       - Admin
     put:
       consumes:
       - application/json
-      description: Update an existing user
       parameters:
       - description: User ID
         in: path
@@ -595,7 +591,6 @@ paths:
       - Admin
   /health:
     get:
-      description: Get API health status, uptime and memory stats
       produces:
       - application/json
       responses:
@@ -609,7 +604,6 @@ paths:
       - Health
   /sessions:
     get:
-      description: List all WhatsApp sessions for the authenticated user
       produces:
       - application/json
       responses:
@@ -623,13 +617,12 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: List all sessions
+      summary: List sessions
       tags:
       - Sessions
     post:
       consumes:
       - application/json
-      description: Create a new WhatsApp session
       parameters:
       - description: Session data
         in: body
@@ -654,14 +647,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Create a new session
+      summary: Create session
       tags:
       - Sessions
   /sessions/{sessionId}:
     delete:
-      description: Delete a WhatsApp session
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -687,9 +679,8 @@ paths:
       tags:
       - Sessions
     get:
-      description: Get details of a specific WhatsApp session
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -711,15 +702,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get session details
+      summary: Get session
       tags:
       - Sessions
     put:
       consumes:
       - application/json
-      description: Update a WhatsApp session configuration
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -754,7 +744,6 @@ paths:
     post:
       consumes:
       - application/json
-      description: Reject an incoming WhatsApp call
       parameters:
       - description: Call rejection data
         in: body
@@ -780,26 +769,26 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Reject incoming call
+      summary: Reject call
       tags:
       - User
   /sessions/{sessionId}/chat/archive:
     post:
       consumes:
       - application/json
-      description: Archive or unarchive a chat
+      description: archive=true/false
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Archive data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.ArchiveChatMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -820,19 +809,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Download an audio and return base64 data
+      description: Returns base64
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Download data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.DownloadMediaMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -853,19 +842,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Download a document and return base64 data
+      description: Returns base64
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Download data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.DownloadMediaMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -886,19 +875,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Download an image and return base64 data
+      description: Returns base64
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Download data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.DownloadMediaMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -919,19 +908,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Download a sticker and return base64 data
+      description: Returns base64
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Download data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.DownloadMediaMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -952,19 +941,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Download a video and return base64 data
+      description: Returns base64
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Download data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.DownloadMediaMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -985,19 +974,18 @@ paths:
     post:
       consumes:
       - application/json
-      description: Mark messages as read
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Mark read data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.MarkReadMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1011,14 +999,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Mark messages as read
+      summary: Mark as read
       tags:
       - Chat
   /sessions/{sessionId}/chat/presence:
     post:
       consumes:
       - application/json
-      description: Send typing/recording indicator to a chat
+      description: 'state: composing/paused'
       parameters:
       - description: Chat presence data
         in: body
@@ -1051,26 +1039,21 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Send chat presence
+      summary: Chat presence
       tags:
       - User
   /sessions/{sessionId}/connect:
     post:
       consumes:
       - application/json
-      description: Connect and start a WhatsApp session. If Immediate is true (default)
-        or not set, returns immediately after initiating connection. If Immediate
-        is false, waits 10 seconds to verify the connection was established successfully
-        before returning - useful for reconnecting sessions that may have been terminated
-        by the phone/device.
+      description: immediate=false waits 10s for verification
       parameters:
       - description: Session ID
         in: path
         name: sessionId
         required: true
         type: string
-      - description: 'Connection options: Subscribe (events to subscribe) and Immediate
-          (if false, waits 10s to verify connection)'
+      - description: Connection options
         in: body
         name: request
         schema:
@@ -1091,19 +1074,18 @@ paths:
           schema:
             $ref: '#/definitions/model.Response'
         "500":
-          description: Connection failed (when Immediate is false)
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Connect WhatsApp session
+      summary: Connect session
       tags:
       - Sessions
   /sessions/{sessionId}/disconnect:
     post:
-      description: Disconnect the WhatsApp session
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -1121,14 +1103,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Disconnect WhatsApp session
+      summary: Disconnect session
       tags:
       - Sessions
   /sessions/{sessionId}/group/announce:
     post:
       consumes:
       - application/json
-      description: Set the announce mode of a group (only admins can send messages)
+      description: Only admins send when true
       parameters:
       - description: Group announce data
         in: body
@@ -1154,14 +1136,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set group announce mode
+      summary: Set announce mode
       tags:
       - Group
   /sessions/{sessionId}/group/create:
     post:
       consumes:
       - application/json
-      description: Create a new WhatsApp group
       parameters:
       - description: Group data
         in: body
@@ -1201,7 +1182,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Set the disappearing messages timer for a group
+      description: 'duration: 24h/7d/90d/off'
       parameters:
       - description: Group ephemeral data
         in: body
@@ -1227,12 +1208,11 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set group ephemeral timer
+      summary: Set ephemeral
       tags:
       - Group
   /sessions/{sessionId}/group/info:
     get:
-      description: Get detailed information about a group
       parameters:
       - description: Group JID
         in: query
@@ -1264,7 +1244,6 @@ paths:
     post:
       consumes:
       - application/json
-      description: Get information about a group from an invite link
       parameters:
       - description: Group invite info request
         in: body
@@ -1290,12 +1269,11 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get group invite info
+      summary: Get invite info
       tags:
       - Group
   /sessions/{sessionId}/group/invitelink:
     get:
-      description: Get the invite link for a group
       parameters:
       - description: Group JID
         in: query
@@ -1320,14 +1298,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get group invite link
+      summary: Get invite link
       tags:
       - Group
   /sessions/{sessionId}/group/join:
     post:
       consumes:
       - application/json
-      description: Join a group using an invite link/code
       parameters:
       - description: Group join data
         in: body
@@ -1353,14 +1330,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Join group via invite link
+      summary: Join group
       tags:
       - Group
   /sessions/{sessionId}/group/leave:
     post:
       consumes:
       - application/json
-      description: Leave a WhatsApp group
       parameters:
       - description: Group JID
         in: body
@@ -1394,7 +1370,6 @@ paths:
       - Group
   /sessions/{sessionId}/group/list:
     get:
-      description: List all joined WhatsApp groups
       parameters:
       - description: Session ID
         in: path
@@ -1421,7 +1396,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Set the locked mode of a group (only admins can edit group info)
+      description: Only admins edit when true
       parameters:
       - description: Group locked data
         in: body
@@ -1447,14 +1422,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set group locked mode
+      summary: Set locked mode
       tags:
       - Group
   /sessions/{sessionId}/group/name:
     post:
       consumes:
       - application/json
-      description: Update the name of a group
       parameters:
       - description: Group name data
         in: body
@@ -1485,14 +1459,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set group name
+      summary: Set name
       tags:
       - Group
   /sessions/{sessionId}/group/photo:
     post:
       consumes:
       - application/json
-      description: Set the photo of a group
+      description: Base64 image required
       parameters:
       - description: Group photo data
         in: body
@@ -1518,14 +1492,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set group photo
+      summary: Set photo
       tags:
       - Group
   /sessions/{sessionId}/group/photo/remove:
     post:
       consumes:
       - application/json
-      description: Remove the photo of a group
       parameters:
       - description: Group JID
         in: body
@@ -1554,14 +1527,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Remove group photo
+      summary: Remove photo
       tags:
       - Group
   /sessions/{sessionId}/group/topic:
     post:
       consumes:
       - application/json
-      description: Update the topic/description of a group
       parameters:
       - description: Group topic data
         in: body
@@ -1592,14 +1564,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set group topic
+      summary: Set topic
       tags:
       - Group
   /sessions/{sessionId}/group/updateparticipants:
     post:
       consumes:
       - application/json
-      description: Add, remove, promote or demote group participants
+      description: 'action: add/remove/promote/demote'
       parameters:
       - description: Participants data
         in: body
@@ -1634,14 +1606,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Update group participants
+      summary: Update participants
       tags:
       - Group
   /sessions/{sessionId}/logout:
     post:
-      description: Logout and clear WhatsApp session data
+      description: Clears session credentials
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -1659,26 +1631,26 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Logout WhatsApp session
+      summary: Logout session
       tags:
       - Sessions
   /sessions/{sessionId}/messages/audio:
     post:
       consumes:
       - application/json
-      description: Send an audio file to a phone number
+      description: Base64 data:audio/* required
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Audio data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.AudioMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1699,19 +1671,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a buttons message to a phone number (experimental)
+      description: Experimental, 1-3 buttons
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Buttons data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.ButtonsMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1725,26 +1697,26 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Send buttons message
+      summary: Send buttons
       tags:
       - Messages
   /sessions/{sessionId}/messages/contact:
     post:
       consumes:
       - application/json
-      description: Send a contact card to a phone number
+      description: Requires vCard format
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Contact data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.ContactMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1765,19 +1737,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Delete a sent message
+      description: Revokes own messages
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Delete data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.DeleteMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1798,19 +1770,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a document to a phone number
+      description: Base64 with filename required
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Document data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.DocumentMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1831,19 +1803,18 @@ paths:
     post:
       consumes:
       - application/json
-      description: Edit a sent message
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Edit data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.EditMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1864,19 +1835,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send an image to a phone number
+      description: Base64 data:image/* required
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Image data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.ImageMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1897,19 +1868,18 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a list message to a phone number
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: List data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.ListMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1923,26 +1893,25 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Send list message
+      summary: Send list
       tags:
       - Messages
   /sessions/{sessionId}/messages/location:
     post:
       consumes:
       - application/json
-      description: Send a location to a phone number
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Location data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.LocationMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1963,19 +1932,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a poll to a phone number or group
+      description: Min 2 options required
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Poll data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.PollMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -1996,19 +1965,18 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a reaction to a message
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Reaction data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.ReactionMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -2029,19 +1997,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a sticker to a phone number
+      description: WebP format required
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Sticker data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.StickerMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -2062,19 +2030,18 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a text message to a phone number
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Message data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.TextMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -2088,26 +2055,26 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Send text message
+      summary: Send text
       tags:
       - Messages
   /sessions/{sessionId}/messages/video:
     post:
       consumes:
       - application/json
-      description: Send a video to a phone number
+      description: Base64 data:video/* required
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Video data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.VideoMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -2128,7 +2095,6 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create a new newsletter/channel
       parameters:
       - description: Newsletter details
         in: body
@@ -2161,7 +2127,6 @@ paths:
     post:
       consumes:
       - application/json
-      description: Subscribe to a newsletter/channel
       parameters:
       - description: Newsletter JID
         in: body
@@ -2187,12 +2152,11 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Follow newsletter
+      summary: Follow
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/info:
     get:
-      description: Get detailed information about a newsletter by JID
       parameters:
       - description: Newsletter JID
         in: query
@@ -2217,12 +2181,11 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get newsletter info
+      summary: Get info
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/info/invite:
     get:
-      description: Get newsletter information using an invite link/code
       parameters:
       - description: Invite key/code
         in: query
@@ -2247,12 +2210,11 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get newsletter info via invite
+      summary: Get info by invite
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/list:
     get:
-      description: Get list of subscribed WhatsApp channels/newsletters
       parameters:
       - description: Session ID
         in: path
@@ -2272,14 +2234,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: List subscribed newsletters
+      summary: List newsletters
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/liveupdates:
     post:
       consumes:
       - application/json
-      description: Subscribe to receive live updates from a newsletter
+      description: Returns subscription duration
       parameters:
       - description: Newsletter JID
         in: body
@@ -2305,14 +2267,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Subscribe to live updates
+      summary: Live updates
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/markviewed:
     post:
       consumes:
       - application/json
-      description: Mark newsletter messages as viewed
       parameters:
       - description: Mark viewed request
         in: body
@@ -2338,12 +2299,12 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Mark messages as viewed
+      summary: Mark viewed
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/messages:
     get:
-      description: Get messages from a newsletter
+      description: count/before for pagination
       parameters:
       - description: Newsletter JID
         in: query
@@ -2377,14 +2338,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get newsletter messages
+      summary: Get messages
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/mute:
     post:
       consumes:
       - application/json
-      description: Toggle mute status for a newsletter
+      description: mute=true/false
       parameters:
       - description: Mute request
         in: body
@@ -2410,14 +2371,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Mute/unmute newsletter
+      summary: Mute newsletter
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/reaction:
     post:
       consumes:
       - application/json
-      description: Send a reaction to a newsletter message
       parameters:
       - description: Reaction request
         in: body
@@ -2443,14 +2403,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Send reaction to message
+      summary: Send reaction
       tags:
       - Newsletter
   /sessions/{sessionId}/newsletter/unfollow:
     post:
       consumes:
       - application/json
-      description: Unsubscribe from a newsletter/channel
       parameters:
       - description: Newsletter JID
         in: body
@@ -2476,16 +2435,16 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Unfollow newsletter
+      summary: Unfollow
       tags:
       - Newsletter
   /sessions/{sessionId}/pairphone:
     post:
       consumes:
       - application/json
-      description: Get pairing code for phone number authentication
+      description: Returns 8-digit linking code
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -2509,14 +2468,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Pair with phone number
+      summary: Pair phone
       tags:
       - Sessions
   /sessions/{sessionId}/qr:
     get:
-      description: Get QR code for WhatsApp authentication
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -2539,9 +2497,8 @@ paths:
       - Sessions
   /sessions/{sessionId}/status:
     get:
-      description: Get the WhatsApp session status
       parameters:
-      - description: Session name
+      - description: Session ID
         in: path
         name: sessionId
         required: true
@@ -2559,26 +2516,25 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get session status
+      summary: Get status
       tags:
       - Sessions
   /sessions/{sessionId}/status/text:
     post:
       consumes:
       - application/json
-      description: Set WhatsApp status/story text
       parameters:
+      - description: Session ID
+        in: path
+        name: sessionId
+        required: true
+        type: string
       - description: Status text data
         in: body
         name: message
         required: true
         schema:
           $ref: '#/definitions/model.StatusTextMessage'
-      - description: Session ID
-        in: path
-        name: sessionId
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -2592,14 +2548,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set status text
+      summary: Set status
       tags:
       - Status
   /sessions/{sessionId}/user/avatar:
     post:
       consumes:
       - application/json
-      description: Get profile picture URL for a phone number
+      description: preview=true for thumbnail
       parameters:
       - description: Phone and preview option
         in: body
@@ -2630,14 +2586,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get user avatar
+      summary: Get avatar
       tags:
       - User
   /sessions/{sessionId}/user/check:
     post:
       consumes:
       - application/json
-      description: Check if phone numbers are registered on WhatsApp
+      description: Verifies WhatsApp registration
       parameters:
       - description: Phone numbers
         in: body
@@ -2668,12 +2624,11 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Check if users are on WhatsApp
+      summary: Check users
       tags:
       - User
   /sessions/{sessionId}/user/contacts:
     get:
-      description: Get all contacts from the connected WhatsApp account
       parameters:
       - description: Session ID
         in: path
@@ -2698,7 +2653,6 @@ paths:
       - User
   /sessions/{sessionId}/user/getlid:
     get:
-      description: Get the Local ID (LID) for a phone number
       parameters:
       - description: Phone number
         in: query
@@ -2723,14 +2677,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get user LID
+      summary: Get LID
       tags:
       - User
   /sessions/{sessionId}/user/info:
     post:
       consumes:
       - application/json
-      description: Get WhatsApp user info by phone numbers
       parameters:
       - description: Phone numbers
         in: body
@@ -2766,7 +2719,6 @@ paths:
       - User
   /sessions/{sessionId}/user/newsletters:
     get:
-      description: Get list of subscribed WhatsApp channels/newsletters
       parameters:
       - description: Session ID
         in: path
@@ -2786,14 +2738,14 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get subscribed newsletters
+      summary: Get newsletters
       tags:
       - User
   /sessions/{sessionId}/user/presence:
     post:
       consumes:
       - application/json
-      description: Send online/offline presence status
+      description: available/unavailable
       parameters:
       - description: Presence (available/unavailable)
         in: body
@@ -2827,7 +2779,6 @@ paths:
       - User
   /sessions/{sessionId}/webhook:
     delete:
-      description: Remove webhook URL and unsubscribe from all events for the session
       parameters:
       - description: Session name
         in: path
@@ -2847,11 +2798,10 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Delete webhook configuration
+      summary: Delete webhook
       tags:
       - Webhook
     get:
-      description: Get current webhook URL and subscribed events for the session
       parameters:
       - description: Session name
         in: path
@@ -2871,13 +2821,12 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Get webhook configuration
+      summary: Get webhook
       tags:
       - Webhook
     post:
       consumes:
       - application/json
-      description: Configure webhook URL and events to subscribe for the session
       parameters:
       - description: Session name
         in: path
@@ -2903,13 +2852,13 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Set webhook configuration
+      summary: Set webhook
       tags:
       - Webhook
     put:
       consumes:
       - application/json
-      description: Update webhook URL, events and active status for the session
+      description: active=false to disable
       parameters:
       - description: Session name
         in: path
@@ -2944,7 +2893,7 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuth: []
-      summary: Update webhook configuration
+      summary: Update webhook
       tags:
       - Webhook
 securityDefinitions:

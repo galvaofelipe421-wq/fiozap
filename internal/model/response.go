@@ -5,37 +5,22 @@ import (
 	"net/http"
 )
 
-type Response struct {
-	Success bool        `json:"success"`
-	Code    int         `json:"code"`
-	Data    interface{} `json:"data,omitempty"`
-	Error   string      `json:"error,omitempty"`
+type ErrorResponse struct {
+	Error string `json:"error"`
 }
 
 func RespondJSON(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-
-	resp := Response{
-		Success: code >= 200 && code < 300,
-		Code:    code,
-		Data:    data,
+	if data != nil {
+		_ = json.NewEncoder(w).Encode(data)
 	}
-
-	_ = json.NewEncoder(w).Encode(resp)
 }
 
 func RespondError(w http.ResponseWriter, code int, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-
-	resp := Response{
-		Success: false,
-		Code:    code,
-		Error:   err.Error(),
-	}
-
-	_ = json.NewEncoder(w).Encode(resp)
+	_ = json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
 }
 
 func RespondOK(w http.ResponseWriter, data interface{}) {

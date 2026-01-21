@@ -20,8 +20,7 @@ func NewNewsletterHandler(newsletterService *service.NewsletterService) *Newslet
 }
 
 // List godoc
-// @Summary List subscribed newsletters
-// @Description Get list of subscribed WhatsApp channels/newsletters
+// @Summary List newsletters
 // @Tags Newsletter
 // @Produce json
 // @Success 200 {object} model.Response
@@ -47,8 +46,7 @@ func (h *NewsletterHandler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetInfo godoc
-// @Summary Get newsletter info
-// @Description Get detailed information about a newsletter by JID
+// @Summary Get info
 // @Tags Newsletter
 // @Produce json
 // @Param jid query string true "Newsletter JID"
@@ -81,8 +79,7 @@ func (h *NewsletterHandler) GetInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetInfoWithInvite godoc
-// @Summary Get newsletter info via invite
-// @Description Get newsletter information using an invite link/code
+// @Summary Get info by invite
 // @Tags Newsletter
 // @Produce json
 // @Param key query string true "Invite key/code"
@@ -115,8 +112,8 @@ func (h *NewsletterHandler) GetInfoWithInvite(w http.ResponseWriter, r *http.Req
 }
 
 // GetMessages godoc
-// @Summary Get newsletter messages
-// @Description Get messages from a newsletter
+// @Summary Get messages
+// @Description count/before for pagination
 // @Tags Newsletter
 // @Produce json
 // @Param jid query string true "Newsletter JID"
@@ -165,8 +162,7 @@ func (h *NewsletterHandler) GetMessages(w http.ResponseWriter, r *http.Request) 
 }
 
 // Follow godoc
-// @Summary Follow newsletter
-// @Description Subscribe to a newsletter/channel
+// @Summary Follow
 // @Tags Newsletter
 // @Accept json
 // @Produce json
@@ -205,8 +201,7 @@ func (h *NewsletterHandler) Follow(w http.ResponseWriter, r *http.Request) {
 }
 
 // Unfollow godoc
-// @Summary Unfollow newsletter
-// @Description Unsubscribe from a newsletter/channel
+// @Summary Unfollow
 // @Tags Newsletter
 // @Accept json
 // @Produce json
@@ -245,8 +240,8 @@ func (h *NewsletterHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 }
 
 // Mute godoc
-// @Summary Mute/unmute newsletter
-// @Description Toggle mute status for a newsletter
+// @Summary Mute newsletter
+// @Description mute=true/false
 // @Tags Newsletter
 // @Accept json
 // @Produce json
@@ -289,8 +284,7 @@ func (h *NewsletterHandler) Mute(w http.ResponseWriter, r *http.Request) {
 }
 
 // MarkViewed godoc
-// @Summary Mark messages as viewed
-// @Description Mark newsletter messages as viewed
+// @Summary Mark viewed
 // @Tags Newsletter
 // @Accept json
 // @Produce json
@@ -334,8 +328,7 @@ func (h *NewsletterHandler) MarkViewed(w http.ResponseWriter, r *http.Request) {
 }
 
 // SendReaction godoc
-// @Summary Send reaction to message
-// @Description Send a reaction to a newsletter message
+// @Summary Send reaction
 // @Tags Newsletter
 // @Accept json
 // @Produce json
@@ -379,8 +372,8 @@ func (h *NewsletterHandler) SendReaction(w http.ResponseWriter, r *http.Request)
 }
 
 // SubscribeLiveUpdates godoc
-// @Summary Subscribe to live updates
-// @Description Subscribe to receive live updates from a newsletter
+// @Summary Live updates
+// @Description Returns subscription duration
 // @Tags Newsletter
 // @Accept json
 // @Produce json
@@ -423,7 +416,6 @@ func (h *NewsletterHandler) SubscribeLiveUpdates(w http.ResponseWriter, r *http.
 
 // Create godoc
 // @Summary Create newsletter
-// @Description Create a new newsletter/channel
 // @Tags Newsletter
 // @Accept json
 // @Produce json
